@@ -1,0 +1,3 @@
+- use: conchylicultor/pypi-build-publish@v1
+  with:
+    pypi-token: ${{ secrets.PYPI_API_TOKEN }}
