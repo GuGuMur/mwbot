@@ -1,10 +1,17 @@
 name: Poetry Build & Publish
-on: [push, pull_request]
+
+on:
+  release:
+    types: [push,pull_request,published]
+
 jobs:
-  build-and-deploy:
+  publish-service-client-package:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-    - name: marketaction
-      uses: conchylicultor/pypi-build-publish@v1
-      with:
-        pypi-token: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Publish PyPi package
+        uses: code-specialist/pypi-poetry-publish@v1
+        with:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_REGISTRY_PASSWORD: ${{ secrets.PYPI_TOKEN }}
