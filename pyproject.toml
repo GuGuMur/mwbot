@@ -32,3 +32,6 @@ secondary = true
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[package.source]
+type = "git"
+url = "ssh://git@github.com/GuGuMur/mwbot.git"
