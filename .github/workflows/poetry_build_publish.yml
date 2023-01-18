@@ -1,6 +1,6 @@
 name: Poetry Build & Publish
 
-on: [push,pull_request,published]
+on: [push,pull_request]
 
 jobs:
   publish-service-client-package:
