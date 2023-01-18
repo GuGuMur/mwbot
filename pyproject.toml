@@ -3,6 +3,9 @@ name = "mwbot"
 version = "0.1.0"
 description = "为PRTS和ArcaeaCNWiki提供编辑功能的Mediawiki API库"
 authors = ["咕咕mur <2221533105@qq.com>"]
+license = "MIT"
+repository = "https://github.com/GuGuMur/mwbot"
+
 readme = "README.md"
 
 [tool.poetry.dependencies]
