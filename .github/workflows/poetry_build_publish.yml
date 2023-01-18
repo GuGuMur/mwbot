@@ -1,3 +1,10 @@
-- use: conchylicultor/pypi-build-publish@v1
-  with:
-    pypi-token: ${{ secrets.PYPI_API_TOKEN }}
+name: Poetry Build & Publish
+on: [push, pull_request]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: marketaction
+      - use: conchylicultor/pypi-build-publish@v1
+        with:
+          pypi-token: ${{ secrets.PYPI_API_TOKEN }}
