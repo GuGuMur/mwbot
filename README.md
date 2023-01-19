@@ -34,8 +34,11 @@ async def main():
             # 将username和password替换为你刚才获得的机器人登录名和密码
             # 你只能选择一种登录方式，并填入对应登录方式的登录名和密码
     await bot.login()
+    
+    # 样例：打印页面 用户:User 的内容
     r = await bot.get_section(page_name="用户:User")
     print(r)
+    
     await bot.close()
 
 if __name__ == "__main__":
