@@ -4,7 +4,8 @@
 #### 获取Bot应有的参数
 1. 前往对应wiki的 特殊:版本 页面获取wiki的index.php, api.php的路径
 2. 前往对应wiki的 特殊:BotPasswords 创建一套机器人密码
-<details><summary>详细过程</summary>
+<details>
+<summary>详细过程</summary>
     
 1. 填入“机器人名称”。（如：BotName）
 
