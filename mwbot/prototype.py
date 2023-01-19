@@ -4,12 +4,14 @@ import pendulum
 import regex as re
 '''定义一些功能特化的基类'''
 class WikiSectionDict(ABC):
-    '''用于get_section()方法的字典类
+    '''用于Bot.get_section()方法的字典类
     覆写了dict.index()方法，输出可直接用于edit(section)的值'''
-    def __init__(wd):
+    def __init__(self, wd):
         self.wd = wd
     def index(num:str)->str:
         return int(self.wd.index(num)+1)
+    def __str__(self):
+        return str(self.wd)
     
 class gen_wikitext():
     '''生成wikitext'''
