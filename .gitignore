@@ -181,3 +181,4 @@ cython_debug/
 
 ## mwbot
 .test.py
+dev.md
