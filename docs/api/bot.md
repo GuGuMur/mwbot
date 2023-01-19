@@ -10,9 +10,8 @@
 
 <details><summary>示例</summary>
 
-```python
+```py
 from mwbot import Bot
-import asyncio
 bot = Bot(
         sitename="my_wiki", 
         api="api", 
@@ -31,7 +30,7 @@ bot = Bot(
 
 <details><summary>示例</summary>
 
-```python
+```py
 ...
 token = await bot.fetch_token(type="login") #用于登录的token
 token = await bot.fetch_token(type="csrf")  #用于编辑的token
@@ -39,14 +38,52 @@ token = await bot.fetch_token(type="csrf")  #用于编辑的token
 </details>
 
 
-#### _async method_ `login()`  :id=method-bot-login
+#### _async func_ `login()`  :id=method-bot-login
 * 说明：本函数用于登录站点。**必须调用本函数后才能进行后续操作**。
 * 参见：[MW:API:Login](https://www.mediawiki.org/wiki/API:Login)
 
 <details><summary>示例</summary>
 
-```python
+```py
 ...
 bot.login()
+```
+</details>
+
+#### _async func_ `close()`  :id=method-bot-close
+* 说明：本函数用于关闭bot类调用的异步客户端，避免出现异常错误。**必须在一切bot操作结束后调用**。
+* 参见：[httpx:async#Opening and closing clients](https://www.python-httpx.org/async/#opening-and-closing-clients)
+
+<details><summary>示例</summary>
+
+```py
+...
+bot.close()
+```
+</details>
+
+#### _async method_ `get_data(page_name)`  :id=method-bot-get_data
+* 说明：本方法用于获取站点中某个页面的信息
+* 参数
+    * page_name(str)：页面名
+<details><summary>返回值 & 示例</summary>
+
+```python
+...
+page_name  = bot.get_data(page_name="用户:User")
+           ={
+                'pageid': 41211,                            # 页面ID
+                'ns': 2,                                    # 页面对应名字空间
+                'title':'用户:User',                        # 最后转换的页面名（例如：`User:user`在mediawiki-zh-cn版本中的结果是`用户:User`
+                'revisions': [{
+                    'slots': {
+                        'main': {
+                            'contentmodel': 'wikitext',     # 页面内容类型
+                            'contentformat': 'text/x-wiki', # 页面内容格式
+                            'content': '<wikitext>'
+                        }
+                    }
+                }]
+            } 
 ```
 </details>

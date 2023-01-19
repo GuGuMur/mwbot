@@ -66,7 +66,7 @@ class Bot:
         text = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         text = text.json()
         text = text["query"]["pages"][0]
-        #logger.info(f'Get info of [[{text["title"]}]] successfully.\n{text}')
+        logger.info(f'Get info of [[{text["title"]}]] successfully.')
         return text
 
     async def get_page_text(self,page_name:str,section:str='')->str:

@@ -1,6 +1,6 @@
 ### 概述
 
-mwbot是一个基于Python的Mediawiki API库，同时封装了用于[PRTS wiki](https://prts.wiki)的[部分方法](https://github.com/GuGuMur/mwbot/blob/main/mwbot/arktool.py)。
+mwbot是一个基于Python的异步 Mediawiki API库，同时封装了用于[PRTS wiki](https://prts.wiki)的[部分方法](https://github.com/GuGuMur/mwbot/blob/main/mwbot/arktool.py)。
 
 ### 子页面
 

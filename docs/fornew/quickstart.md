@@ -1,6 +1,10 @@
 ### 前备工作
 #### 安装
-    pip install -i https://pypi.org/simple/ mwbot
+
+```bash
+pip install -i https://pypi.org/simple/ mwbot
+```
+
 #### 获取Bot应有的参数
 1. 前往对应wiki的 特殊:版本 页面获取wiki的index.php, api.php的路径
 2. 前往对应wiki的 特殊:BotPasswords 创建一套机器人密码
@@ -17,7 +21,7 @@
 </details>
 
 ### 开始使用
-```python
+```py
 from mwbot import Bot
 import asyncio
 async def main():

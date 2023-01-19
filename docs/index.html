@@ -8,8 +8,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-python.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-wiki.min.js"></script>
+  <link href="http://cdn.bootcss.com/prism/9000.0.1/themes/prism.min.css" rel="stylesheet">
+  <link href="http://cdn.bootcss.com/prism/9000.0.1/plugins/line-numbers/prism-line-numbers.min.css" rel="stylesheet">
+  <script src="//unpkg.com/docsify"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </head>
 <body>
@@ -18,15 +19,29 @@
     window.$docsify = {
       name: 'mwbot <small><a href="https://pypi.org/project/mwbot">v1.0.1</small>',
       repo: 'GuGuMur/mwbot',
+      search: {
+            placeholder: '搜索',
+            noData: "无结果"
+        },
       loadSidebar: true,
       loadNavbar: true,
       subMaxLevel: 5,
       auto2top: true,
-      homepage: 'homepage.md',
+      homepage: 'index.md',
       // logo: '/_media/icon.png',
+      plugins: [
+            window.DocsifyCopyCodePlugin.init()
+        ]
     }
   </script>
   <!-- Docsify v4 -->
+  <script src="//unpkg.com/docsify/lib/plugins/search.min.js"></script>
+  <script src="//unpkg.com/docsify/lib/plugins/zoom-image.min.js"></script>
+  <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script> 
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <script src="//unpkg.com/docsify-copy-code/index.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-python.min.js"></script>
+  <!-- <script src="assets/JS/highlight.min.js"></script> -->
 </body>
 </html>
