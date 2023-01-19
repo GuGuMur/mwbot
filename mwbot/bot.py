@@ -5,6 +5,7 @@ import os
 # import schedule
 # import aiohttp
 from .prototype import WikiSectionDict
+from typing import Union
 
 class Bot:
     '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
@@ -69,7 +70,7 @@ class Bot:
         logger.info(f'Get info of [[{text["title"]}]] successfully.')
         return text
 
-    async def get_page_text(self,page_name:str,section:str='')->str:
+    async def get_page_text(self,page_name:str,section:Union[str,int]='')->str:
         '''获取页面中的文本'''
         # PARAMS = {
         #     "title=": page_name,
@@ -77,7 +78,7 @@ class Bot:
         #     "section": section
         # }
         # act = self.S.post(url=self.index, data=PARAMS, headers=self.headers)
-        act = await self.client.post(url=f"{self.index}?action=raw&title={page_name}&section={section}", headers=self.headers)
+        act = await self.client.post(url=f"{self.index}?action=raw&title={page_name}&section={str(section)}", headers=self.headers)
         if act.status_code == 404:
             logger.warning(f"请检查get_page_text传入的页面是否在{self.sitename}存在。")
             return None

@@ -9,12 +9,12 @@ class WikiSectionDict(ABC):
     覆写了dict.index()方法，输出可直接用于edit(section)的值'''
     def __init__(self, wd:list):
         self.wd = wd
-    def index(num:str)->str:
-        return int(self.wd.index(num)+1)
+    def index(num:str)->int:
+        return self.wd.index(num)+1
     def __str__(self):
         return str(self.wd)
     
-class gen_wikitext():
+class gen_wikitext:
     '''生成wikitext'''
     def __init__(self):
         self.txt:str = """"""
@@ -25,7 +25,7 @@ class gen_wikitext():
     def add_cat(self,cat:str):
         self.txt += f"[[分类:{cat}]]\n"
         
-class gen_tem():
+class gen_tem:
     '''生成wikitext-template'''
     def __init__(self,title:str):
         self.txt = "{{"+title
