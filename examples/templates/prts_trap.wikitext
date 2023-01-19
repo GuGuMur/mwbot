@@ -1,0 +1,20 @@
+<%page args="range=''"/>
+{{关卡装置
+|装置名称=${trap_name}
+|装置英文名=${trap_name_en}
+|装置等级=${level}
+|装置生命值=${hp}
+|装置攻击力=${atk}
+|装置防御=${defender}
+|装置法抗=${mr} <%doc>magic resistance</%doc>
+|装置技能=${skill_1}
+|装置技能回复类型=${skill_sp_type_1}
+|装置技能触发类型=${skill_trigger_type_1}
+|装置技能持续时间=${skill_length_1}
+|装置技能SP=${skill_sp_1}
+|装置技能描述=${skill_describe_1}
+% if range is not None:
+|装置攻击范围=${range}
+% endif
+}}
+

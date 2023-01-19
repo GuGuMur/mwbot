@@ -3,15 +3,15 @@ import ujson as json
 from loguru import logger
 import os
 import schedule
-import aiohttp
-import mwbot.prototype as pt
+# import aiohttp
+from .prototype import WikiSectionDict
 
 class Bot:
-    '''[https://www.mediawiki.wikimirror.org/wiki/API:Main_page/zh]
+    '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
     现阶段要求sitename, api，index，username，password五个参数'''
 
     # 成员变量
-    def __init__(self, sitename, api, index, username, password):
+    def __init__(self,sitename:str,api:str,index:str,username:str,password:str):
         '''初始化参数sitename, api, index, username, password'''
         self.sitename = sitename
         self.api = api
@@ -36,7 +36,7 @@ class Bot:
         location = type + "token"
         return token['query']['tokens'][location]
 
-    async def login(self,output_bool=True):
+    async def login(self,output_bool:bool=True):
         '''登录'''
         login_PARAMS = {
             'action': "login",
@@ -55,7 +55,7 @@ class Bot:
     async def close(self):
         await self.client.aclose()
 
-    async def get_data(self, page_name: str):
+    async def get_data(self, page_name:str):
         PARAMS = {
             "action": "query",
             "prop": "revisions",
@@ -71,7 +71,7 @@ class Bot:
         #logger.info(f'Get info of [[{text["title"]}]] successfully.\n{text}')
         return text
 
-    async def get_page_text(self, page_name, section=''):
+    async def get_page_text(self,page_name:str,section:str='')->str:
         '''获取页面中的文本'''
         # PARAMS = {
         #     "title=": page_name,
@@ -87,7 +87,7 @@ class Bot:
         else:
             return str(act.text)
 
-    async def edit_page(self, title:str, text:str, summary="", **kwargs):
+    async def edit_page(self,title:str,text:str,summary:str="", **kwargs):
         '''编辑一个页面。常用参数：title,text,summary.'''
         PARAMS = {
             "action": "edit",
@@ -110,7 +110,8 @@ class Bot:
             logger.info(f'Edit [[{PARAMS["title"]}]] successfully.')
         else:
             logger.debug(act)
-    async def create_page(self,title,text,summary):
+
+    async def create_page(self,title:str,text:str,summary:str)->bool:
         '''创建页面'''
         deal = self.get_data(page_name=title)
         if "missing" in deal:
@@ -120,7 +121,7 @@ class Bot:
             logger.info(f"Skip Create [[{title}]].")
             return True
 
-    async def upload_local(self, local_name, local_path, web_name, text="", **kwargs):
+    async def upload_local(self,local_name,local_path,web_name,text="", **kwargs):
         '''从本地上传一个文件.'''
         PARAMS = {
             "action": "upload",
@@ -140,11 +141,11 @@ class Bot:
         # logger.info(f'Upload {local_name}=>[[File:{web_name}]] successfully.')
         print(act)
 
-    async def purge(self, titles, **kwargs):
+    async def purge(self,titles:str,**kwargs):
         '''刷新页面'''
         PARAMS = {
             "action": "purge",
-            "titles": str(titles),
+            "titles": titles,
             "format": "json"
         }
         for key, value in kwargs.items():
@@ -153,14 +154,10 @@ class Bot:
             PARAMS[key] = value
         act = await self.client.post(url=self.api, data=PARAMS,headers=self.headers)
         act = act.json()
-        # if act["upload"]["result"] == "Success":
-        #     logger.info(f"Purge [[{titles}]] Successfully.")
-        # else:
-        #     logger.debug(act)
-        logger.info(act)
+        logger.info(f"Purge [[{titles}]] Successfully.")
 
     async def parse(self, page_name, **kwargs):
-        '''https://prts.wiki/api.php?action=help&modules=parse'''
+        '''解析'''
         PARAMS = {
             "format": "json",
             "page": page_name,
@@ -173,17 +170,17 @@ class Bot:
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         return act.json()
 
-    async def get_section(self, page_name):
+
+    async def get_section(self, page_name:str)->WikiSectionDict:
         result = await self.parse(page_name=page_name, prop='sections')
         result = result['parse']['sections']
         result_list = []
         for i in result:
             result_list.append(i['line'])
         if result_list:
-            return pt.WikiSectionDict(result_list)
+            return WikiSectionDict(result_list)
         else:
             logger.info(f'页面{page_name}没有任何章节！')
-
 
     async def deal_flow(self,title,cotmoderationState,cotreason="标记"):
         PARAMS = {
@@ -197,6 +194,7 @@ class Bot:
         }
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers).json()
         logger.info(f"{cotmoderationState} the flow {title} successfully.({cotreason})")
+
     async def reply_flow(self,title,content):
         PARAMS = {
             "action": "flow",
@@ -210,5 +208,6 @@ class Bot:
         }
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers).json()
         logger.info(f"Reply the flow {title} successfully.")
+
     async def rc(self,namespace):
         ...

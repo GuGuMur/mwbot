@@ -1,12 +1,13 @@
+'''定义一些功能特化的基类'''
 from abc import ABC
 import mwparserfromhell
-import pendulum
-import regex as re
-'''定义一些功能特化的基类'''
+# import pendulum
+# import regex as re
+
 class WikiSectionDict(ABC):
     '''用于Bot.get_section()方法的字典类
     覆写了dict.index()方法，输出可直接用于edit(section)的值'''
-    def __init__(self, wd):
+    def __init__(self, wd:list):
         self.wd = wd
     def index(num:str)->str:
         return int(self.wd.index(num)+1)
@@ -26,7 +27,7 @@ class gen_wikitext():
         
 class gen_tem():
     '''生成wikitext-template'''
-    def __init__(self,title):
+    def __init__(self,title:str):
         self.txt = "{{"+title
         self.enter_int = 0
     def add_par(self,name:str = "", txt:str = "", enter:bool=True):
@@ -38,7 +39,7 @@ class gen_tem():
             self.txt+=f"|{name}={txt}"
         else:
             self.txt += f"|{txt}"
-    def result(self):
+    def result(self)->str:
         '''输出结果'''
         if self.enter_int != 0:
             self.txt += "\n"
