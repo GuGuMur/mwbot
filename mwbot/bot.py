@@ -2,7 +2,7 @@ import httpx
 import ujson as json
 from loguru import logger
 import os
-import schedule
+# import schedule
 # import aiohttp
 from .prototype import WikiSectionDict
 
@@ -36,7 +36,7 @@ class Bot:
         location = type + "token"
         return token['query']['tokens'][location]
 
-    async def login(self,output_bool:bool=True):
+    async def login(self):
         '''登录'''
         login_PARAMS = {
             'action': "login",
@@ -48,9 +48,7 @@ class Bot:
         login = await self.client.post(url=self.api, data=login_PARAMS,headers=self.headers)
         login = login.json()
         if login['login']['result'] == "Success":
-            if output_bool==True:
-                logger.info(f'Welcome to {self.sitename}, {login["login"]["lgusername"]}!')
-            else:...
+            logger.info(f'Welcome to {self.sitename}, {login["login"]["lgusername"]}!')
 
     async def close(self):
         await self.client.aclose()
