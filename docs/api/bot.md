@@ -66,6 +66,13 @@ bot.close()
 * 说明：本方法用于获取站点中某个页面的信息
 * 参数
     * page_name(str)：页面名
+* 参见：
+    * [MW:API:Query](https://www.mediawiki.org/wiki/API:Query)
+    * [MW:API:Meta](https://www.mediawiki.org/wiki/API:Meta)
+    * [MW:API:Properties](https://www.mediawiki.org/wiki/API:Properties)
+    * [MW:API:List](https://www.mediawiki.org/wiki/API:Lists)
+    * 对应wiki的 `api.php?action=help&modules=query` 页面
+
 <details><summary>返回值 & 示例</summary>
 
 ```python
