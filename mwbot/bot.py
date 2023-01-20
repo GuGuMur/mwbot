@@ -52,11 +52,11 @@ class Bot:
     async def close(self):
         await self.client.aclose()
 
-    async def get_data(self, page_name:str):
+    async def get_data(self, title:str):
         PARAMS = {
             "action": "query",
             "prop": "revisions",
-            "titles": page_name,
+            "titles": title,
             "rvslots": "*",
             "rvprop": "content",
             "formatversion": 2,
@@ -68,15 +68,15 @@ class Bot:
         logger.info(f'Get info of [[{text["title"]}]] successfully.')
         return text
 
-    async def get_page_text(self,page_name:str,section:Union[str,int]='')->str:
+    async def get_page_text(self,title:str,section:Union[str,int]='')->str:
         '''获取页面中的文本'''
         # PARAMS = {
-        #     "title=": page_name,
+        #     "title=": title,
         #     "action": "raw",
         #     "section": section
         # }
         # act = self.S.post(url=self.index, data=PARAMS, headers=self.headers)
-        act = await self.client.post(url=f"{self.index}?action=raw&title={page_name}&section={str(section)}", headers=self.headers)
+        act = await self.client.post(url=f"{self.index}?action=raw&title={title}&section={str(section)}", headers=self.headers)
         if act.status_code == 404:
             logger.warning(f"请检查get_page_text传入的页面是否在{self.sitename}存在。")
             return None
@@ -109,7 +109,7 @@ class Bot:
 
     async def create_page(self,title:str,text:str,summary:str)->bool:
         '''创建页面'''
-        deal = self.get_data(page_name=title)
+        deal = self.get_data(title=title)
         if "missing" in deal:
             self.edit_page(title=title,text=text,summary=summary)
             return False
@@ -152,11 +152,11 @@ class Bot:
         act = act.json()
         logger.info(f"Purge [[{titles}]] Successfully.")
 
-    async def parse(self, page_name, **kwargs):
+    async def parse(self, title, **kwargs):
         '''解析'''
         PARAMS = {
             "format": "json",
-            "page": page_name,
+            "page": title,
             "action": "parse"
         }
         for key, value in kwargs.items():
@@ -167,8 +167,8 @@ class Bot:
         return act.json()
 
 
-    async def get_section(self, page_name:str)->WikiSectionDict:
-        result = await self.parse(page_name=page_name, prop='sections')
+    async def get_section(self, title:str)->WikiSectionDict:
+        result = await self.parse(title=title, prop='sections')
         result = result['parse']['sections']
         result_list = []
         for i in result:
@@ -176,7 +176,7 @@ class Bot:
         if result_list:
             return WikiSectionDict(result_list)
         else:
-            logger.info(f'页面{page_name}没有任何章节！')
+            logger.info(f'页面{title}没有任何章节！')
 
     async def deal_flow(self,title,cotmoderationState,cotreason="标记"):
         PARAMS = {

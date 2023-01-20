@@ -62,10 +62,10 @@ bot.close()
 ```
 </details>
 
-#### _async method_ `get_data(page_name)`  :id=method-bot-get_data
+#### _async method_ `get_data(title)`  :id=method-bot-get_data
 * 说明：本方法用于获取站点中某个页面的信息
 * 参数
-    * page_name(`str`)：页面名
+    * title(`str`)：页面名
 * 参见：
     * [MW:API:Query](https://www.mediawiki.org/wiki/API:Query)
     * [MW:API:Meta](https://www.mediawiki.org/wiki/API:Meta)
@@ -77,7 +77,7 @@ bot.close()
 
 ```python
 ...
-page_name  = bot.get_data(page_name="用户:User")
+title      = bot.get_data(title="用户:User")
            ={
                 'pageid': 41211,                            # 页面ID
                 'ns': 2,                                    # 页面对应名字空间
@@ -95,10 +95,10 @@ page_name  = bot.get_data(page_name="用户:User")
 ```
 </details>
 
-#### _async method_ `get_page_text(pagename,section)`  :id=method-bot-get_page_text
+#### _async method_ `get_page_text(title,section)`  :id=method-bot-get_page_text
 * 说明：本函数用于获取wiki某个页面（的某个段落的）文本。
 * 参数
-    * `page_name`(`str`)：某个页面的名称。
+    * `title`(`str`)：某个页面的名称。
     * `section`(`Union[str,int]`)：章节标识符，可借助[`get_section`](#method-bot-get_section)获取。
         > 假设有wikitext：
         > 
@@ -136,10 +136,10 @@ page_name  = bot.get_data(page_name="用户:User")
 
 ```python
 ...
-full_page = await bot.get_page_text(pagename="Test")
-foreword_text = await bot.get_page_text(pagename="Test",section=0)
-section_text = await bot.get_page_text(pagename="Test",section=x)
-None_page = await bot.get_page_text(pagename=None)
+full_page = await bot.get_page_text(title="Test")
+foreword_text = await bot.get_page_text(title="Test",section=0)
+section_text = await bot.get_page_text(title="Test",section=x)
+None_page = await bot.get_page_text(title=None)
 # > 返回值：None
 # > LOGGER：请检查get_page_text传入的页面是否在<self.sitename>存在。
 ```
@@ -160,7 +160,7 @@ None_page = await bot.get_page_text(pagename=None)
 
 ```python
 ...
-pagetext = await bot.get_page_text(pagename="Test").replace("test","Test")
+pagetext = await bot.get_page_text(title="Test").replace("test","Test")
 await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字母大写")
 # > LOGGER：Edit <title> successfully.
 ```
