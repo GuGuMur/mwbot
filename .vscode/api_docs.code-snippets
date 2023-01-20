@@ -15,6 +15,7 @@
 			"* 参数",
 			"    $4",
 			"* 返回值：$5",
+			"",
 			"<details><summary>示例</summary>",
 			"",
 			"```python",

@@ -2,8 +2,6 @@ import httpx
 import ujson as json
 from loguru import logger
 import os
-# import schedule
-# import aiohttp
 from .prototype import WikiSectionDict
 from typing import Union
 
@@ -82,7 +80,6 @@ class Bot:
         if act.status_code == 404:
             logger.warning(f"请检查get_page_text传入的页面是否在{self.sitename}存在。")
             return None
-        #logger.info(f'The text of [[{page_name}]]:\n{data}')
         else:
             return str(act.text)
 

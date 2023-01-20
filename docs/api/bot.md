@@ -10,7 +10,7 @@
 
 <details><summary>示例</summary>
 
-```py
+```python
 from mwbot import Bot
 bot = Bot(
         sitename="my_wiki", 
@@ -24,13 +24,13 @@ bot = Bot(
 #### _async method_ `fetch_token(type)`  :id=method-Bot-fetch_token
 * 说明：本方法通过传入所需的token值来获取部分操作的必需参数。
 * 参数
-    * `type`(str)：所需的token类型（如所需`csrftoken`，则传入`csrf`）
+    * `type`(`str`)：所需的token类型（如所需`csrftoken`，则传入`csrf`）
 * 返回值：`str`
 * 参见：[MW:API:Tokens](https://www.mediawiki.org/wiki/API:Tokens)
 
 <details><summary>示例</summary>
 
-```py
+```python
 ...
 token = await bot.fetch_token(type="login") #用于登录的token
 token = await bot.fetch_token(type="csrf")  #用于编辑的token
@@ -44,7 +44,7 @@ token = await bot.fetch_token(type="csrf")  #用于编辑的token
 
 <details><summary>示例</summary>
 
-```py
+```python
 ...
 bot.login()
 ```
@@ -65,7 +65,7 @@ bot.close()
 #### _async method_ `get_data(page_name)`  :id=method-bot-get_data
 * 说明：本方法用于获取站点中某个页面的信息
 * 参数
-    * page_name(str)：页面名
+    * page_name(`str`)：页面名
 * 参见：
     * [MW:API:Query](https://www.mediawiki.org/wiki/API:Query)
     * [MW:API:Meta](https://www.mediawiki.org/wiki/API:Meta)
@@ -92,5 +92,76 @@ page_name  = bot.get_data(page_name="用户:User")
                     }
                 }]
             } 
+```
+</details>
+
+#### _async method_ `get_page_text(pagename,section)`  :id=method-bot-get_page_text
+* 说明：本函数用于获取wiki某个页面（的某个段落的）文本。
+* 参数
+    * `page_name`(`str`)：某个页面的名称。
+    * `section`(`Union[str,int]`)：章节标识符，可借助[`get_section`](#method-bot-get_section)获取。
+        > 假设有wikitext：
+        > 
+            本页面作为mwbot.Bot.get_page_text的示例页面。
+            == 二级标题 1 ==
+            114514
+            === 三级标题 1 ===
+            2
+            ==== 四级标题 1 ====
+            3
+            === 三级标题 2 ===
+            4
+            == 二级标题 2 ==
+        > 则页面全篇的序号为`*空*`
+        > 
+        > 页面从顶部到第一个标题之间的部分(即序言)的序号为`0`
+        > 
+        > **从上到下**标题的`序数`为对应序号
+        > > `二级标题 1` => `1`
+        > >
+        > > `三级标题 1` => 2 
+        > >
+        > > `四级标题 1` => 3
+        > >
+        > > `三级标题 2` => 4
+        > >
+        > > `二级标题 2` => 5
+        > >
+        > !>不是标题等级的序数！
+
+* 参考：[MW:Manual:Parameters_to_index.php#Raw](https://www.mediawiki.org/wiki/Manual:Parameters_to_index.php#Raw)
+* 返回值：`str`/`None`
+
+<details><summary>示例</summary>
+
+```python
+...
+full_page = await bot.get_page_text(pagename="Test")
+foreword_text = await bot.get_page_text(pagename="Test",section=0)
+section_text = await bot.get_page_text(pagename="Test",section=x)
+None_page = await bot.get_page_text(pagename=None)
+# > 返回值：None
+# > LOGGER：请检查get_page_text传入的页面是否在<self.sitename>存在。
+```
+</details>
+
+#### _async method_ `edit_page(title,text,summary="",**kwargs)`  :id=method-bot-edit_page
+* 说明：本方法用于编辑某个页面（的指定章节）。
+* 参数
+    * ***必填项***`title`(`str`)：编辑页面的标题。
+    * ***必填项***`text`(`str`)：处理后的页面内容
+    * *选填项*`summary=""`(`str`)：编辑页面的摘要，会自动在后方加入`//Edit via Bot.`字样。
+    * *参考项* `section`(`Union[str,int]`)：章节标识符（参见上方[`get_page_text`方法](#method-bot-get_page_text)，也可选用`new`字符创建新章节）。
+    * *参考项* `sectiontitle`(`str`)：选用`section=new`时对应的章节标题。
+    * ...
+* 参考：[MW:API:Edit](https://www.mediawiki.org/wiki/API:Edit)
+
+<details><summary>示例</summary>
+
+```python
+...
+pagetext = await bot.get_page_text(pagename="Test").replace("test","Test")
+await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字母大写")
+# > LOGGER：Edit <title> successfully.
 ```
 </details>
