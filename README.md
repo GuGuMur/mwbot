@@ -36,7 +36,7 @@ async def main():
     await bot.login()
     
     # 样例：打印页面 用户:User 的内容
-    r = await bot.get_page_text(page_name="用户:User")
+    r = await bot.get_page_text(title="用户:User")
     print(r)
     
     await bot.close()

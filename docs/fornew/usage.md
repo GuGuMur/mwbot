@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 ### 获取某页面文本并对该页面进行批量替换
 ```python 
-pagetext = await bot.get_page_text(pagename="Test")
+pagetext = await bot.get_page_text(title="Test")
 #用于获取Test页面的信息
 pagetext = pagetext.replace("test","Test")
 #替换文本中所有`test`为`Test`
@@ -40,15 +40,15 @@ await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字�
 
 ### 获取某个章节的内容并进行覆盖编辑
 ```python
-section = await bot.get_sections(page_name="Test")
+sections = await bot.get_sections(title="Test")
 # 获取一个页面中所有的章节
-section_index = section.index("标题")
+section_index = sections.index("标题")
 # 获取该页面`标题`的序号
 await bot.edit_page(title="test",text="OVERRIDE",summary=f"覆盖{section_index}章节",section=section_index)
-# 编辑操作：标题为Test，章节为{section_index}，文本为"OVERRIDE"，摘要为"覆盖{section_index}章节//Edit via bot."
+# 编辑操作：标题为`Test`，章节序号为{section_index}，文本为"OVERRIDE"，摘要为"覆盖{section_index}章节//Edit via bot."
 ```
 
-#### 从pagelist.txt中获取所有的页面并进行刷新
+### 从pagelist.txt中获取所有的页面并进行刷新
 ```pagelist.txt
 页面1
 分类:2
@@ -68,4 +68,23 @@ for i in pagelist:
     # 刷新每一个页面
 ```
 
+### 从一段wikitext中获取其中所有的页面并删除所有的`Test`章节
+```python
+from mwbot.utils import get_all_links
+wikitext = """
+[[页面1]]
+[[页面2|xxx]]
+[[页面3|jbsh]]
+""" 
+pagelist = get_all_links(content=wikitext)
+# 从该段wikitext获取所有的页面
+# pagelist = ['页面1', '页面2', '页面3']
+for i in pagelist:
+    sections = await bot.get_sections(title=i)
+    # 获取一个页面中所有的章节
+    section_index = sections.index("Test")
+    # 获取该页面`标题`的序号
+    await bot.edit_page(title="test",text="",summary=f"删除Test章节",section=section_index)
+    # 编辑操作：标题为`i`，章节序号为{section_index}，文本为""，摘要为"删除Test章节//Edit via bot."
+```
 *施工中......*
