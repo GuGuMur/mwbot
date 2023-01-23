@@ -1,0 +1,2 @@
+#### _class_ `WikiSectionDict(ABC)`  :id=WikiSectionDict
+* 介绍：用于`Bot.get_section()`方法的字典类，覆写了`dict.index()`方法，输出可直接用于`bot.edit(section)`的值。样例参见[`Bot.get_sections()`](/api/bot.md#method-bot-get_sections)

@@ -99,35 +99,7 @@ title      = bot.get_data(title="用户:User")
 * 说明：本函数用于获取wiki某个页面（的某个段落的）文本。
 * 参数
     * `title`(`str`)：某个页面的名称。
-    * `section`(`Union[str,int]`)：章节标识符，可借助[`get_section`](#method-bot-get_section)获取。
-        > 假设有wikitext：
-        > 
-            本页面作为mwbot.Bot.get_page_text的示例页面。
-            == 二级标题 1 ==
-            114514
-            === 三级标题 1 ===
-            2
-            ==== 四级标题 1 ====
-            3
-            === 三级标题 2 ===
-            4
-            == 二级标题 2 ==
-        > 则页面全篇的序号为`*空*`
-        > 
-        > 页面从顶部到第一个标题之间的部分(即序言)的序号为`0`
-        > 
-        > **从上到下**标题的`序数`为对应序号
-        > > `二级标题 1` => `1`
-        > >
-        > > `三级标题 1` => 2 
-        > >
-        > > `四级标题 1` => 3
-        > >
-        > > `三级标题 2` => 4
-        > >
-        > > `二级标题 2` => 5
-        > >
-        > !>不是标题等级的序数！
+    * `section`(`Union[str,int]`)：章节标识符，可借助[`get_sections()`](#method-bot-get_sections)获取。
 
 * 参考：[MW:Manual:Parameters_to_index.php#Raw](https://www.mediawiki.org/wiki/Manual:Parameters_to_index.php#Raw)
 * 返回值：`str`/`None`
@@ -163,5 +135,89 @@ None_page = await bot.get_page_text(title=None)
 pagetext = await bot.get_page_text(title="Test").replace("test","Test")
 await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字母大写")
 # > LOGGER：Edit <title> successfully.
+```
+</details>
+
+#### _async method_ `create_page(title)`  :id=method-bot-create_page
+* 说明：用于**创建**一个页面
+* 参数
+    * `title`(`str`)：要编辑的标题
+* 返回值：`bool`：当页面创建成功时返回`True`，当要创建的页面中已有内容时返回`False`
+
+<details><summary>示例</summary>
+
+```python
+...
+await bot.create_page(title=old) 
+# False
+# LOGGER : Skip Create [[{title}]].
+await bot.create_page(title=new) 
+# True
+```
+</details>
+
+#### _async method_ `purge(title)`  :id=method-bot-purge
+* 说明：本函数用于刷新一个页面。
+* 参数
+    * `title`(`str`)：刷新页面的标题
+* 参考：[MW:API:Purge](https://www.mediawiki.org/wiki/API:Purge)
+
+<details><summary>示例</summary>
+
+```python
+...
+await bot.purge(title)
+# > LOGGER : Purge [[{titles}]] Successfully.
+```
+</details>
+
+#### _async method_ `get_sections(title)`  :id=method-bot-get_sections
+* 说明：本函数用于获取一个**已存在的**页面中的所有标题。
+> 假设有wikitext：
+> 
+> ```
+    本页面作为mwbot.Bot.get_page_text的示例页面。
+    == 二级标题 1 ==
+    114514
+    === 三级标题 1 ===
+    2
+    ==== 四级标题 1 ====
+    3
+    === 三级标题 2 ===
+    4
+    == 二级标题 2 ==
+> ```
+> 
+> 则页面全篇的序号为`*空*`
+> 
+> 页面从顶部到第一个标题之间的部分(即序言)的序号为`0`
+> 
+> **从上到下**标题的`序数`为对应序号
+> > `二级标题 1` => `1`
+> >
+> > `三级标题 1` => `2` 
+> >
+> > `四级标题 1` => `3`
+> >
+> > `三级标题 2` => `4`
+> >
+> > `二级标题 2` => `5`
+> >
+> !>不是标题等级的序数！
+
+* 参数
+    * `title`(`str`)：待获取标题的页面名
+* 返回值：[prototype.WikiSectionDict](/api/prototype.md#WikiSectionDict)/`False`
+
+<details><summary>示例</summary>
+
+```python
+...
+sections = await bot.get_sections(title="above")
+# > sections:WikiSectionDict = ["二级标题 1","三级标题 1","四级标题 1","三级标题 2","二级标题 2"]
+index = section.index("二级标题 2")
+# index:int = 5
+sections = await bot.get_sections(title="not")
+# LOGGER：Page [[{title}]] has no section!
 ```
 </details>

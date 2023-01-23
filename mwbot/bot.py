@@ -137,11 +137,11 @@ class Bot:
         # logger.info(f'Upload {local_name}=>[[File:{web_name}]] successfully.')
         print(act)
 
-    async def purge(self,titles:str,**kwargs):
+    async def purge(self,title:str,**kwargs):
         '''刷新页面'''
         PARAMS = {
             "action": "purge",
-            "titles": titles,
+            "titles": title,
             "format": "json"
         }
         for key, value in kwargs.items():
@@ -167,7 +167,7 @@ class Bot:
         return act.json()
 
 
-    async def get_section(self, title:str)->WikiSectionDict:
+    async def get_sections(self, title:str)->WikiSectionDict:
         result = await self.parse(title=title, prop='sections')
         result = result['parse']['sections']
         result_list = []
@@ -176,7 +176,8 @@ class Bot:
         if result_list:
             return WikiSectionDict(result_list)
         else:
-            logger.info(f'页面{title}没有任何章节！')
+            return False
+            logger.info(f'Page [[{title}]] has no section!')
 
     async def deal_flow(self,title,cotmoderationState,cotreason="标记"):
         PARAMS = {

@@ -64,7 +64,7 @@ pagelist = get_page_links_from_pagelist_txt("当前文件夹的路径")
 # 从 `./pagelist.txt` 获取每一行对应的页面
 # pagelist = ['页面1', '分类:2', '模板:3', 'widget:4', 'Mediawiki:5', 'Topic:6']
 for i in pagelist:
-    await bot.purge(titles=i)
+    await bot.purge(title=i)
     # 刷新每一个页面
 ```
 
