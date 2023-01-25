@@ -138,20 +138,22 @@ await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字�
 ```
 </details>
 
-#### _async method_ `create_page(title)`  :id=method-bot-create_page
+#### _async method_ `create_page(title,text,summary)`  :id=method-bot-create_page
 * 说明：用于**创建**一个页面
 * 参数
     * `title`(`str`)：要编辑的标题
+    * `text`(`str`)：编辑页面的内容
+    * `summary=""`(`str`)：编辑页面的摘要，会自动在后方加入`//Edit via Bot.`字样。
 * 返回值：`bool`：当页面创建成功时返回`True`，当要创建的页面中已有内容时返回`False`
 
 <details><summary>示例</summary>
 
 ```python
 ...
-await bot.create_page(title=old) 
+await bot.create_page(title=old,text=xxx) 
 # False
 # LOGGER : Skip Create [[{title}]].
-await bot.create_page(title=new) 
+await bot.create_page(title=new,text=xxx) 
 # True
 ```
 </details>

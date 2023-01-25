@@ -17,7 +17,8 @@ class Bot:
         self.index = index
         self.username = username
         self.password = password
-        self.client = httpx.AsyncClient()
+        timeout = httpx.Timeout(10.0, connect=60.0, read=60.0, write=60.0, pool=60.0)
+        self.client = httpx.AsyncClient(verify=False,timeout=timeout)
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36'}
 
@@ -31,6 +32,7 @@ class Bot:
             'format': "json"
         }
         token = await self.client.post(url=self.api, data=PARAMS)
+        token.raise_for_status()
         token = token.json()
         location = type + "token"
         return token['query']['tokens'][location]
@@ -65,7 +67,7 @@ class Bot:
         text = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         text = text.json()
         text = text["query"]["pages"][0]
-        logger.info(f'Get info of [[{text["title"]}]] successfully.')
+        # logger.info(f'Get info of [[{text["title"]}]] successfully.')
         return text
 
     async def get_page_text(self,title:str,section:Union[str,int]='')->str:
@@ -98,7 +100,7 @@ class Bot:
             key = str(key)
             value = str(value)
             PARAMS[key] = value
-        PARAMS["token"] = self.fetch_token(type="csrf")
+        PARAMS["token"] = await self.fetch_token(type="csrf")
         PARAMS["summary"] += " //Edit by Bot."
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         act = act.json()
@@ -107,11 +109,11 @@ class Bot:
         else:
             logger.debug(act)
 
-    async def create_page(self,title:str,text:str,summary:str)->bool:
+    async def create_page(self,title:str,text:str,summary:str="")->bool:
         '''创建页面'''
-        deal = self.get_data(title=title)
+        deal = await self.get_data(title=title)
         if "missing" in deal:
-            self.edit_page(title=title,text=text,summary=summary)
+            await self.edit_page(title=title,text=text,summary=summary)
             return False
         else:
             logger.info(f"Skip Create [[{title}]].")
@@ -150,7 +152,7 @@ class Bot:
             PARAMS[key] = value
         act = await self.client.post(url=self.api, data=PARAMS,headers=self.headers)
         act = act.json()
-        logger.info(f"Purge [[{titles}]] Successfully.")
+        logger.info(f"Purge [[{title}]] Successfully.")
 
     async def parse(self, title, **kwargs):
         '''解析'''

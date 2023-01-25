@@ -4,7 +4,7 @@
   * [全部用法](fornew/usage.md)
 
 * [API](api/index.md)
-  * [Bot](api/bot.md)
+  * [bot](api/bot.md)
   * [prototype](api/prototype.md)
   * [utils](api/utils.md)
   * [arktool](api/arktool.md)
