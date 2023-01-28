@@ -13,12 +13,12 @@
 1. 填入“机器人名称”。（如：BotName）
 
 2. 选择下方的权限
-- 这将能够限制通过机器人密码登录后的账户权限，尤其是当你的人工账户和机器人是同一账户时，这将有效保护你的账户。
-- bot只能使用您选中的与您拥有的权限的交集。
+    - 这将能够限制通过机器人密码登录后的账户权限，尤其是当你的人工账户和机器人是同一账户时，这将有效保护你的账户。
+    - bot只能使用您选中的与您拥有的权限的交集。
     
 3. 创建成功，获得机器人密码，你将有两种登录机器人的方式，任意一种都能登录至机器人账户：
-- 登录名为User@BotName，密码为BotPassword
-- 登录名为User，密码为BotName@BotPassword
+    - 登录名为User@BotName，密码为BotPassword
+    - 登录名为User，密码为BotName@BotPassword
 </details>
 
 ### 开始使用
@@ -46,5 +46,5 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 ## 深入
-* [范例](example/)
+* [范例](examples/)
 * [文档](https://gugumur.github.io/mwbot)
