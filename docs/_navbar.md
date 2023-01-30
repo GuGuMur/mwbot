@@ -4,7 +4,7 @@
   * [示例(Github)](https://github.com/GuGuMur/mwbot/tree/main/examples)
 
 * [API](api/index.md)
-  * [Bot](api/bot.md)
+  * [bot](api/bot.md)
   * [prototype](api/prototype.md)
   * [utils](api/utils.md)
   * [arktool](api/arktool.md)

@@ -9,7 +9,7 @@
 2. 前往对应wiki的 特殊:BotPasswords 创建一套机器人密码
 
 <details><summary>详细过程</summary>
-    
+
 1. 填入“机器人名称”。（如：BotName）
 
 2. 选择下方的权限
@@ -46,5 +46,5 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 ## 深入
-* [范例](examples/)
+* [范例](https://github.com/GuGuMur/mwbot/tree/main/examples)
 * [文档](https://gugumur.github.io/mwbot)

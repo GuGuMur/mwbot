@@ -23,7 +23,7 @@ class Bot:
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36'}
 
     async def fetch_token(self, type:str)->str:
-        '''fetch_token(type=STRING)
+        '''fetch_token(type:str)
         根据不同的type类型返回对应的token'''
         PARAMS = {
             'action': "query",
@@ -127,17 +127,20 @@ class Bot:
             "format": "json",
             "token": self.fetch_token(type="csrf"),
             "ignorewarnings": True,
-            "watchlist" :"nochange"
+            "watchlist": "nochange",
+            "async": True
         }
         for key, value in kwargs.items():
             key = str(key)
             value = str(value)
             PARAMS[key] = value
         FILE = {'file': (local_name, open(local_path, 'rb'), 'multipart/form-data')}
-        act = await self.client.post(url=self.api, data=PARAMS,headers=self.headers, files=FILE)
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers, files=FILE)
         act = act.json()
-        # logger.info(f'Upload {local_name}=>[[File:{web_name}]] successfully.')
-        print(act)
+        if act["upload"]["result"] == "Success":
+            logger.info(f'Upload {local_name}=>[[File:{web_name}]] successfully.')
+        else:
+            logger.debug(act)
 
     async def purge(self,title:str,**kwargs):
         '''刷新页面'''

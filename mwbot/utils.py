@@ -1,15 +1,14 @@
-import mwparserfromhell
+# import mwparserfromhell
 import re
 import ujson as json
 from loguru import logger
 import os
+import inspect
 from mako.template import Template
 from mako.runtime import Context
-import inspect
 
-@logger.catch
 def get_keys(dict,value)->list:
-	'''[list]用于获取键内容相同的所有值'''
+	'''[dict]用于获取键内容相同的所有值'''
 	l = [k for k,v in dict.items() if v==value]
 	if l :
 		return l
