@@ -5,6 +5,7 @@ import os
 from .prototype import WikiSectionDict
 from typing import Union
 
+
 class Bot:
     '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
     现阶段要求sitename, api，index，username，password五个参数'''
@@ -21,6 +22,9 @@ class Bot:
         self.client = httpx.AsyncClient(verify=False,timeout=timeout)
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36'}
+
+    async def __aexit__(self):
+        await self.close()
 
     async def fetch_token(self, type:str)->str:
         '''fetch_token(type:str)
@@ -211,5 +215,32 @@ class Bot:
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers).json()
         logger.info(f"Reply the flow {title} successfully.")
 
-    async def rc(self,namespace):
+    def rc(self,namespace):
         ...
+    async def search(self, txt:str, namespace:str="0", sroffset:str="0", **kwargs):
+        PARAMS = {
+            "action":"query",
+            "list":"search",
+            "srsearch":txt,
+            "srlimit":"max",
+            "utf8":"",
+            "srnamespace":namespace,
+            "srwhat":"text",
+            "sroffset":sroffset,
+            "format": "json",
+        }
+        for key, value in kwargs.items():
+            key = str(key)
+            value = str(value)
+            PARAMS[key] = value
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        rl = []
+        if act["query"]["search"] != False: 
+            print(len(act["query"]["search"]),sroffset)
+            for i in act["query"]["search"]:
+                rl.append(i["title"])    
+        if "continue" in act:
+            temp = await self.search(txt=txt,namespace=namespace,sroffset=(int(sroffset)+1),**kwargs)
+            for i in temp:rl.append(i)
+        return rl
