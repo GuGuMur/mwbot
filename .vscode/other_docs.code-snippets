@@ -6,11 +6,11 @@
 	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
 	// Placeholders with the same ids are connected.
 	// Example:
-	"api.bot.docs": {
+	"other.docs": {
 		"scope": "markdown",
-		"prefix": "botapi",
+		"prefix": "other",
 		"body": [
-			"#### _async method_ `$1($2)`  :id=method-bot-$1",
+			"#### _method_ `$1($2)`  :id=method-$1",
 			"* 说明：$3",
 			"* 参数",
 			"    $4",
@@ -21,11 +21,10 @@
 			"",
 			"```python",
 			"...",
-			"$6 = await bot.$1($2)",
-			"# > $7",
+			"$6",
 			"```",
 			"</details>",
 		],
-		"description": "提供api.bot.md的快捷脚本"
+		"description": "提供其余文档编写的快捷脚本"
 	}
 }
