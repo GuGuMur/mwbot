@@ -175,7 +175,6 @@ class Bot:
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         return act.json()
 
-
     async def get_sections(self, title:str)->WikiSectionDict:
         result = await self.parse(title=title, prop='sections')
         result = result['parse']['sections']
@@ -244,3 +243,33 @@ class Bot:
             temp = await self.search(txt=txt,namespace=namespace,sroffset=(int(sroffset)+1),**kwargs)
             for i in temp:rl.append(i)
         return rl
+
+    async def ask(self,query:str,api_version:int=2):
+        PARAMS = {
+            "action":"ask",
+            "query":query,
+            "api_version":api_version,
+            "format": "json",
+        }
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        return act["query"]
+
+    async def protect(self,title,protections,expiry:str="infinite",reason:str="",**kwargs):
+        PARAMS = {
+            "action": "protect",
+            "format": "json",
+            "title": title,
+            "protections":protections,
+            "expiry":expiry,
+            "reason":reason
+        }
+        for key, value in kwargs.items():
+            key = str(key)
+            value = str(value)
+            PARAMS[key] = value
+        PARAMS["token"] = await self.fetch_token(type="csrf")
+        PARAMS["reason"] += " //Protect by Bot."
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        return act["protect"]

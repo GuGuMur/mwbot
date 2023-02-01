@@ -223,3 +223,36 @@ sections = await bot.get_sections(title="not")
 # LOGGER：Page [[{title}]] has no section!
 ```
 </details>
+
+#### _async method_ `search(txt,namespace=0)`  :id=method-bot-search
+* 说明：搜索站点并返回**所有**结果
+* 参数
+    * `txt`(`str`)：搜索的文本。
+    * `namespace`(`str`)：搜索所在的名字空间（默认0，即主空间）
+* 参考：[MW:API:Search](https://www.mediawiki.org/wiki/API:Search)
+* 返回值：`list`
+
+<details><summary>示例</summary>
+
+```python
+...
+a = await bot.search(txt,namespace=0)
+```
+</details>
+
+#### _async method_ `ask(query,api_version=3)`  :id=method-bot-ask
+* 说明：使用SMW ask站点
+* 参数
+    * `query`(`str`):SMW语句
+    * `api_version`(`int`):返回的结果类型
+* 参考：[SMW:Help:API:Ask](https://www.semantic-mediawiki.org/wiki/Help:API:ask)
+* 返回值：`Dict`
+
+<details><summary>示例</summary>
+
+```python
+...
+a = await bot.ask(query="",api_version=3)
+# > 
+```
+</details>

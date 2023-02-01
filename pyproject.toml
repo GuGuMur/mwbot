@@ -1,6 +1,6 @@
 [project]
 name = "mwbot"
-version = "1.0.7"
+version = "1.0.8"
 description = "个性化封装的Python Mediawiki API库"
 authors = [
     {name = "咕咕mur",email = "2221533105@qq.com"},
