@@ -50,18 +50,6 @@ bot.login()
 ```
 </details>
 
-#### _async func_ `close()`  :id=method-bot-close
-* 说明：本函数用于关闭bot类调用的异步客户端，避免出现异常错误。**必须在一切bot操作结束后调用**。
-* 参见：[httpx:async#Opening and closing clients](https://www.python-httpx.org/async/#opening-and-closing-clients)
-
-<details><summary>示例</summary>
-
-```py
-...
-bot.close()
-```
-</details>
-
 #### _async method_ `get_data(title)`  :id=method-bot-get_data
 * 说明：本方法用于获取站点中某个页面的信息
 * 参数

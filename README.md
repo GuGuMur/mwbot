@@ -1,4 +1,5 @@
 ## mwbot(Python)
+mwbot是一个基于Python的异步 Mediawiki API库，同时封装了用于[PRTS wiki](https://prts.wiki)的[部分方法](https://github.com/GuGuMur/mwbot/blob/main/mwbot/arktool.py)
 
 ## 快速使用
 ### 前备工作
@@ -39,12 +40,10 @@ async def main():
     # 样例：打印页面 用户:User 的内容
     r = await bot.get_page_text(title="用户:User")
     print(r)
-    
-    await bot.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
 ```
 ## 深入
-* [范例](https://github.com/GuGuMur/mwbot/tree/main/examples)
+* [示例](https://github.com/GuGuMur/mwbot/tree/main/examples)
 * [文档](https://gugumur.github.io/mwbot)

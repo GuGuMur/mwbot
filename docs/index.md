@@ -5,6 +5,7 @@ mwbot是一个基于Python的异步 Mediawiki API库，同时封装了用于[PRT
 ### 子页面
 
 * [快速上手](fornew/quickstart.md)
-* [全部用法](fornew/usage.md)
+* [引导](fornew/guide.md)
+* [示例用法](fornew/usage.md)
 * [API](/api/homepage.md)
-* [范例(Github)](https://github.com/GuGuMur/mwbot/tree/main/examples)
+* [示例(Github)](https://github.com/GuGuMur/mwbot/tree/main/examples)

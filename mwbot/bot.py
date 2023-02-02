@@ -24,7 +24,7 @@ class Bot:
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36'}
 
     async def __aexit__(self):
-        await self.close()
+        await self.client.aclose()
 
     async def fetch_token(self, type:str)->str:
         '''fetch_token(type:str)
@@ -55,8 +55,6 @@ class Bot:
         if login['login']['result'] == "Success":
             logger.info(f'Welcome to {self.sitename}, {login["login"]["lgusername"]}!')
 
-    async def close(self):
-        await self.client.aclose()
 
     async def get_data(self, title:str):
         PARAMS = {
@@ -108,7 +106,7 @@ class Bot:
         PARAMS["summary"] += " //Edit by Bot."
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         act = act.json()
-        if act['edit']['result'] == "Success":
+        if ('edit'['result'] in act) & (act['edit'][result]== "Success"):
             logger.info(f'Edit [[{PARAMS["title"]}]] successfully.')
         else:
             logger.debug(act)

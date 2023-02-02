@@ -1,7 +1,8 @@
 * [首页](/)
 * 入门
   * [快速开始](fornew/quickstart.md)
-  * [全部用法](fornew/usage.md)
+  * [引导](fornew/guide.md)
+  * [示例用法](fornew/usage.md)
 
 * [API](api/index.md)
   * [bot](api/bot.md)

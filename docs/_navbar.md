@@ -1,6 +1,7 @@
 * 入门
   * [快速开始](fornew/quickstart.md)
-  * [全部用法](fornew/usage.md)
+  * [引导](fornew/guide.md)
+  * [示例用法](fornew/usage.md)
   * [示例(Github)](https://github.com/GuGuMur/mwbot/tree/main/examples)
 
 * [API](api/index.md)
