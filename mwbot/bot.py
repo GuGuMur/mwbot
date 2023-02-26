@@ -3,8 +3,8 @@ import ujson as json
 from loguru import logger
 import os
 from mwbot import error
-from .prototype import WikiSectionDict
 from typing import Union
+from .prototype import WikiSectionDict
 
 class Bot:
     '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
@@ -104,7 +104,7 @@ class Bot:
         else:
             return str(act.text)
 
-    async def edit_page(self,title:str,text:str,summary:str="", **kwargs):
+    async def edit_page(self, title:str, **kwargs):
         '''编辑一个页面
         :use: await bot.edit_page(title,text,summary)
         :params: title(`str`) : 编辑页面的标题，不自动重定向
@@ -119,8 +119,6 @@ class Bot:
             "bot": True,
             "format": "json",
             "title": title,
-            "text": text,
-            "summary":summary
         }
         for key, value in kwargs.items():
             key = str(key)
@@ -129,9 +127,11 @@ class Bot:
         data["token"] = await self.fetch_token(type="csrf")
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求.")
-        act = act.json()
-        if ('edit'['result'] in act) & (act['edit'][result]== "Success"):
-            logger.success(f'成功编辑页面 [[{data["title"]}]].')
+        act : dict = act.json()
+        if act.get('edit',{}).get("result",None) != None:
+            if act['edit']['result']=="Success":
+                logger.success(f'成功编辑页面 [[{data["title"]}]].')
+            else:logger.debug(act)
         else:
             logger.debug(act)
 
@@ -312,15 +312,18 @@ class Bot:
         act = act.json()
         return act["protect"]
     
-    async def user_contributions(self,user:str,**kwargs)->list:
+    async def user_contributions(self,user:str,uccontinue:str="",**kwargs)->list:
+        """test"""
         data = {
             "action": "query",
             "list": "usercontribs",
             "ucuser": user,
-            "uclimit": 500,
-            "ucprop": "commentflags|ids|parsedcomment|patrolled|size|sizediff|tags|timestamp|title",
+            "uclimit": "max",
+            "ucprop": "title|ids|size|sizediff|tags|timestamp",
+            "ucnamespace" : "*",
             "format": "json"
         }
+        if uccontinue != "":data["uccontinue"]=uccontinue
         for key, value in kwargs.items():
             key = str(key)
             value = str(value)
@@ -330,7 +333,7 @@ class Bot:
         rl = []
         if act["query"]["usercontribs"] != False: 
             for i in act["query"]["usercontribs"]:
-                rl.append(i["title"])    
+                rl.append(i)
         if "continue" in act:
             temp = await self.user_contributions(user=user,uccontinue=act["continue"]["uccontinue"],**kwargs)
             for i in temp:rl.append(i)
