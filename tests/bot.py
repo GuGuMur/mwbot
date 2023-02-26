@@ -5,13 +5,20 @@ import os
 from .prototype import WikiSectionDict
 from typing import Union
 
+
 class Bot:
     '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
-    现阶段要求sitename, api，index，username，password五个参数'''
+    Bot根程序。
+    :param sitename(`str`) : 站点名称
+    :param index(`str`) : index.php目录
+    :param api(`str`) : index.php路径
+    :param index(`str`) : api.php路径
+    :param username(`str`) : 用户名
+    :param password(`str`) : 用户密码'''
 
     # 成员变量
     def __init__(self,sitename:str,api:str,index:str,username:str,password:str):
-        '''初始化参数sitename, api, index, username, password'''
+        '''同步的构造函数'''
         self.sitename = sitename
         self.api = api
         self.index = index
@@ -22,9 +29,15 @@ class Bot:
         self.headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.62 Safari/537.36'}
 
+    async def __aexit__(self):
+        '''异步析构函数'''
+        await self.client.aclose()
+        logger.info("This task has been completed!")
+
     async def fetch_token(self, type:str)->str:
-        '''fetch_token(type:str)
-        根据不同的type类型返回对应的token'''
+        '''根据不同的type类型返回对应的token
+        :param type(`str`) : token的类型
+        :return: (`str`)<token>'''
         PARAMS = {
             'action': "query",
             'meta': "tokens",
@@ -39,20 +52,18 @@ class Bot:
 
     async def login(self):
         '''登录'''
-        login_PARAMS = {
+        data = {
             'action': "login",
             'lgname': self.username,
             'lgpassword': self.password,
             'lgtoken': await self.fetch_token(type="login"),
             'format': "json"
         }
-        login = await self.client.post(url=self.api, data=login_PARAMS,headers=self.headers)
-        login = login.json()
-        if login['login']['result'] == "Success":
-            logger.info(f'Welcome to {self.sitename}, {login["login"]["lgusername"]}!')
-
-    async def close(self):
-        await self.client.aclose()
+        act = await self.client.post(url=self.api, data=data,headers=self.headers)
+        act = act.json()
+        if act['login']['result'] == "Success":
+            logger.info(f'Welcome to {self.sitename}, {act["login"]["lgusername"]}!')
+            print(act)
 
     async def get_data(self, title:str):
         PARAMS = {
@@ -104,7 +115,7 @@ class Bot:
         PARAMS["summary"] += " //Edit by Bot."
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         act = act.json()
-        if act['edit']['result'] == "Success":
+        if ('edit'['result'] in act) & (act['edit'][result]== "Success"):
             logger.info(f'Edit [[{PARAMS["title"]}]] successfully.')
         else:
             logger.debug(act)
@@ -171,7 +182,6 @@ class Bot:
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
         return act.json()
 
-
     async def get_sections(self, title:str)->WikiSectionDict:
         result = await self.parse(title=title, prop='sections')
         result = result['parse']['sections']
@@ -211,5 +221,62 @@ class Bot:
         act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers).json()
         logger.info(f"Reply the flow {title} successfully.")
 
-    async def rc(self,namespace):
+    def rc(self,namespace):
         ...
+    async def search(self, txt:str, namespace:str="0", sroffset:str="0", **kwargs):
+        PARAMS = {
+            "action":"query",
+            "list":"search",
+            "srsearch":txt,
+            "srlimit":"max",
+            "utf8":"",
+            "srnamespace":namespace,
+            "srwhat":"text",
+            "sroffset":sroffset,
+            "format": "json",
+        }
+        for key, value in kwargs.items():
+            key = str(key)
+            value = str(value)
+            PARAMS[key] = value
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        rl = []
+        if act["query"]["search"] != False: 
+            print(len(act["query"]["search"]),sroffset)
+            for i in act["query"]["search"]:
+                rl.append(i["title"])    
+        if "continue" in act:
+            temp = await self.search(txt=txt,namespace=namespace,sroffset=(int(sroffset)+1),**kwargs)
+            for i in temp:rl.append(i)
+        return rl
+
+    async def ask(self,query:str,api_version:int=2):
+        PARAMS = {
+            "action":"ask",
+            "query":query,
+            "api_version":api_version,
+            "format": "json",
+        }
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        return act["query"]
+
+    async def protect(self,title,protections,expiry:str="infinite",reason:str="",**kwargs):
+        PARAMS = {
+            "action": "protect",
+            "format": "json",
+            "title": title,
+            "protections":protections,
+            "expiry":expiry,
+            "reason":reason
+        }
+        for key, value in kwargs.items():
+            key = str(key)
+            value = str(value)
+            PARAMS[key] = value
+        PARAMS["token"] = await self.fetch_token(type="csrf")
+        PARAMS["reason"] += " //Protect by Bot."
+        act = await self.client.post(url=self.api, data=PARAMS, headers=self.headers)
+        act = act.json()
+        return act["protect"]

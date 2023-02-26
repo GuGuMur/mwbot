@@ -1,7 +1,6 @@
 '''存储与PRTS编辑相关的方法'''
 import mwparserfromhell
 import re
-import requests
 import ujson as json
 from loguru import logger
 import os
