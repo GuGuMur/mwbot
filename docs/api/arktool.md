@@ -7,7 +7,7 @@
 3. 
  ```python
 from mwbot import arktool
-arktool.gamedataPosition = "您获取到的路径"
+arktool.GameDataPosition = "您获取到的路径"
 ...
 ```
 

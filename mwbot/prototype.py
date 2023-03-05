@@ -4,15 +4,15 @@ import mwparserfromhell
 # import pendulum
 # import regex as re
 
-class WikiSectionDict(ABC):
+class WikiSectionList(ABC):
     '''用于Bot.get_section()方法的字典类
     覆写了dict.index()方法，输出可直接用于edit(section)的值'''
-    def __init__(self, wd:list):
-        self.wd = wd
+    def __init__(self, wl:list):
+        self.wd = wl
     def index(num:str)->int:
-        return self.wd.index(num)+1
+        return self.wl.index(num)+1
     def __str__(self):
-        return str(self.wd)
+        return str(self.wl)
     
 class gen_wikitext:
     '''生成wikitext'''

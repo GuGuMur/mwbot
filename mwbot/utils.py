@@ -1,33 +1,40 @@
-# import mwparserfromhell
-import re
+'''mwbot的工具集'''
+import re, os
 import ujson as json
+import datetime
 from loguru import logger
-import os
-import inspect
-from mako.template import Template
-from mako.runtime import Context
+from jinja2 import Environment, FileSystemLoader
 
-def get_keys(dict,value)->list:
-	'''[dict]用于获取键内容相同的所有值'''
-	l = [k for k,v in dict.items() if v==value]
-	if l :
-		return l
-	else:
-		logger.warning(f'请检查字典{dict}中是否存在值为{value}的键!')
-		return []
-
+__all__ = ["get_all_links","get_page_links_from_pagelist_txt","render_template"]
 def get_all_links(content:str)->list:
+    '''从一段文字中获取其中所有的链接
+    .. code-block:: python
+        linklist = utils.get_all_links(content)
+    :param content: 包含链接的字符串
+    :returns: [list]
+    '''
     page_list = re.findall(pattern='(?<=\[\[)(.+?)(?=(\|.*?)|(\]\]))', string=content)
     return [i[0] for i in page_list]
 
-# def get_page_links_from_pagelist_txt(content=os.path.dirname(__file__))->list:
-def get_page_links_from_pagelist_txt(content=os.path.dirname(inspect.stack()[1].filename))->list:
-	classes_path = os.path.expanduser(f'{content}/pagelist.txt')
-	with open(classes_path,'r',encoding = 'UTF-8') as f:
-		pagelist = f.readlines()
-	pagelist = [c.rstrip() for c in pagelist]
-	return pagelist
+def get_page_links_from_pagelist_txt(folder=os.path.dirname(os.path.abspath(__file__)))->list:
+    '''从bot文件同目录下的pagelist.txt读取每行对应的页面名并返回列表。
+    
+    .. code-block:: python
+        pagelist = utils.get_page_links_from_pagelist_txt()
+    :param folder: [可选项]pagelist.txt所在的文件夹
+    :returns: list'''
+    classes_path = os.path.expanduser(f'{folder}/pagelist.txt')
+    with open(f"{folder}/pagelist.txt",'r',encoding = 'UTF-8') as f:
+        pagelist = f.readlines()
+    pagelist = [c.rstrip() for c in pagelist]
+    return pagelist
 
-def template_from_file(t_name:str,**kwargs)->str:
-    template = Template(filename=os.path.expanduser(f'{os.path.dirname(inspect.stack()[1].filename)}/templates/{t_name}'),strict_undefined=True)  
-    return template.render(**kwargs).strip()
+def render_template(T_NAME: str,**kwargs) -> str:
+    '''从 bot程序 目录下的 /templates 目录中选择Jinja2模板并渲染
+    .. code-block:: python
+        utils.render_template(T_NAME="test.jinja",name="Test")
+    :param T_NAME: ./templates 目录中的模板文件名
+    :param **kwargs: 对应模板要求的参数
+    :return: 渲染后的结果'''
+    T_ENV = Environment(loader=FileSystemLoader(f'{os.path.dirname(os.path.abspath(__file__))}/templates'))
+    return T_ENV.get_template(T_NAME).render(**kwargs).strip()

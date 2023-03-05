@@ -197,14 +197,14 @@ await bot.purge(title)
 
 * 参数
     * `title`(`str`)：待获取标题的页面名
-* 返回值：[prototype.WikiSectionDict](/api/prototype.md#WikiSectionDict)/`False`
+* 返回值：[prototype.WikiSectionList](/api/prototype.md#WikiSectionList)/`False`
 
 <details><summary>示例</summary>
 
 ```python
 ...
 sections = await bot.get_sections(title="above")
-# > sections:WikiSectionDict = ["二级标题 1","三级标题 1","四级标题 1","三级标题 2","二级标题 2"]
+# > sections:WikiSectionList = ["二级标题 1","三级标题 1","四级标题 1","三级标题 2","二级标题 2"]
 index = section.index("二级标题 2")
 # index:int = 5
 sections = await bot.get_sections(title="not")

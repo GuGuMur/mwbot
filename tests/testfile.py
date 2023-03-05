@@ -15,5 +15,5 @@
 # if __name__ == "__main__":
 #     asyncio.run(main())
 from mwbot import arktool
-arktool.gamedataPosition = "/home"
+arktool.GameDataPosition = "/home"
 arktool.read_ark_cn_file("excel/item_table.json")

@@ -1,6 +1,6 @@
 [project]
 name = "mwbot"
-version = "1.0.11"
+version = "1.0.12"
 description = "个性化封装的Python Mediawiki API库"
 authors = [
     {name = "咕咕mur",email = "2221533105@qq.com"},
@@ -12,9 +12,9 @@ dependencies = [
     "mwparserfromhell>=0.6.4",
     "regex>=2022.10.31",
     "pendulum>=2.1.2",
-    "mako>=1.2.4",
     "asyncio>=3.4.3",
     "xmltodict>=0.13.0",
+    "Jinja2>=3.1.2",
 ]
 requires-python = ">=3.9,<4.0"
 readme = "README.md"

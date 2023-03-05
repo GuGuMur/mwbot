@@ -11,11 +11,12 @@
 		"prefix": "comment",
 		"body": [
 			"'''$1",
-            ":use: $2",
-			":params: $3",
-			":return: $4",
+            ".. code-block:: python",
+			"    $2",
+			":param $3: $4",
+			":returns: $5",
 			"'''",
 		],
-		"description": "提供bot.py注释编辑的快捷脚本"
+		"description": "注释编辑的快捷脚本"
 	}
 }

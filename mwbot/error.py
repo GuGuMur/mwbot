@@ -1,2 +1,2 @@
-class mwbotLoginERROR(Exception):
+class mwbotLoginError(Exception):
     pass
