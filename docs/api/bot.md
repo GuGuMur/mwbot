@@ -47,6 +47,8 @@ token = await bot.fetch_token(type="csrf")  #用于编辑的token
 ```python
 ...
 bot.login()
+# > SUCCESS : 您已登录至{self.sitename}, {login["login"]["lgusername"]}！
+# > DEBUG : 用户{self.username}登录至{self.sitename}中出现了错误。\n{<错误json>}: 
 ```
 </details>
 
@@ -100,8 +102,8 @@ full_page = await bot.get_page_text(title="Test")
 foreword_text = await bot.get_page_text(title="Test",section=0)
 section_text = await bot.get_page_text(title="Test",section=x)
 None_page = await bot.get_page_text(title=None)
-# > 返回值：None
-# > LOGGER：请检查get_page_text传入的页面是否在<self.sitename>存在。
+# > RETURN：None
+# > WARNING：请检查get_page_text传入的页面是否在{self.sitename}存在。
 ```
 </details>
 
@@ -122,7 +124,9 @@ None_page = await bot.get_page_text(title=None)
 ...
 pagetext = await bot.get_page_text(title="Test").replace("test","Test")
 await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字母大写")
-# > LOGGER：Edit <title> successfully.
+# > INFO : 已向{self.sitename}发送页面[[{title}]]的编辑请求。
+# > wait...
+# > LOGGER ：成功编辑页面 [[{title}]]。
 ```
 </details>
 
@@ -139,10 +143,35 @@ await bot.edit_page(title=Test,text=pagetext,summary="令全部test字样首字�
 ```python
 ...
 await bot.create_page(title=old,text=xxx) 
-# False
-# LOGGER : Skip Create [[{title}]].
+# > RETURN : False
+# > WARNING : 跳过创建[[{title}]]。
 await bot.create_page(title=new,text=xxx) 
-# True
+# > RETURN : True
+```
+</details>
+
+#### _async method_ `upload_local(filepath,servername=None,text="",comment="",**kwargs)`  :id=method-bot-upload_local
+* 说明：用于从**本地**上传一个文件。
+* 参数
+    * `filepath` (`str`) : 文件的本地路径
+    * `servername=None` (`str`) : 文件上传至服务器后的名称。
+        * 默认值为None，即不赋值时在函数执行时自动调整为`filepath`中的文件名
+        * 赋值后则覆盖`filepath`中的文件名
+    * `text=""` (`str`): 用于新文件的初始页面文本。
+    * `comment=""` (`str`): 上传注释。如果没有指定text，那么它也被用于新文件的初始页面文本。
+* 参考：[MW:API:Upload](https://www.mediawiki.org/wiki/API:Upload)
+* 返回值：`bool`
+
+<details><summary>示例</summary>
+
+```python
+...
+b = await bot.upload_local(filepath="test.png",text="test",comment="comment")
+# > RETURN : True
+# > SUCCESS : '成功上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]。'
+e = await bot.upload_local(filepath="?",text="test",comment="comment")
+# > RETURN : False
+# > DEBUG : 上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]失败。\n{<错误json>}
 ```
 </details>
 
@@ -157,7 +186,7 @@ await bot.create_page(title=new,text=xxx)
 ```python
 ...
 await bot.purge(title)
-# > LOGGER : Purge [[{titles}]] Successfully.
+# > SUCCESS : 成功刷新页面 [[{title}]]。
 ```
 </details>
 
@@ -208,7 +237,7 @@ sections = await bot.get_sections(title="above")
 index = section.index("二级标题 2")
 # index:int = 5
 sections = await bot.get_sections(title="not")
-# LOGGER：Page [[{title}]] has no section!
+# WARNING ：页面 [[{title}]] 中没有子章节!
 ```
 </details>
 

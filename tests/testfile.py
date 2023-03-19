@@ -16,4 +16,4 @@
 #     asyncio.run(main())
 from mwbot import arktool
 arktool.GameDataPosition = "/home"
-arktool.read_ark_cn_file("excel/item_table.json")
+arktool.read_ark_file("excel/item_table.json")

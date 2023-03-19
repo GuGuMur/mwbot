@@ -38,7 +38,7 @@ class Bot:
     async def fetch_token(self, type: str) -> str:
         '''根据不同的type类型返回对应的token
         :param: type(`str`)  token的类型'''
-        
+
         data = {
             'action': "query",
             'meta': "tokens",
@@ -54,7 +54,7 @@ class Bot:
     async def login(self) -> None:
         '''登录
         :use: await bot.login()'''
-        
+
         login_data = {
             'action': "login",
             'lgname': self.username,
@@ -66,7 +66,7 @@ class Bot:
         login = login.json()
         if login['login']['result'] == "Success":
             logger.success(
-                f'您已登录至{self.sitename}, {login["login"]["lgusername"]}!')
+                f'您已登录至{self.sitename}, {login["login"]["lgusername"]}！')
         else:
             raise error.mwbotLoginError(
                 f"用户{self.username}登录至{self.sitename}中出现了错误。\n{login}")
@@ -76,7 +76,7 @@ class Bot:
         :use: data = await bot.get_data(title)
         :params: title(`str`)：页面名
         :return: `dict` '''
-        
+
         data = {
             "action": "query",
             "prop": "revisions",
@@ -112,7 +112,7 @@ class Bot:
         :params: summary(`str`) : 编辑摘要
         :params: ...
         :return: None '''
-        
+
         data = {
             "action": "edit",
             "minor": True,
@@ -126,11 +126,11 @@ class Bot:
             value = str(value)
             data[key] = value
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
-        logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求.")
+        logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求。")
         act: dict = act.json()
         if act.get('edit', {}).get("result", None) != None:
             if act['edit']['result'] == "Success":
-                logger.success(f'成功编辑页面 [[{data["title"]}]].')
+                logger.success(f'成功编辑页面 [[{data["title"]}]]。')
             else:
                 logger.debug(act)
                 return False
@@ -145,22 +145,26 @@ class Bot:
         :params: text(`str`) : 创建页面的内容
         :params: summary(`str`) : 编辑摘要
         :return: bool：指示创建是否成功（True为成功，False为失败）'''
-        
+
         deal = await self.get_data(title=title)
         if "missing" in deal:
             await self.edit_page(title=title, text=text, summary=summary)
-            return False
-        else:
-            logger.warning(f"跳过创建[[{title}]].")
             return True
+        else:
+            logger.warning(f"跳过创建[[{title}]]。")
+            return False
 
-    async def upload_local(self, file_path, server_name=os.path.basename(file_path), text="", **kwargs) -> bool:
+    async def upload_local(self, filepath, servername=None,
+                           text="", comment="", **kwargs) -> bool:
         '''从本地上传一个文件。'''
-        
+        if servername is None:
+            servername = os.path.basename(filepath)
         data = {
             "action": "upload",
-            "filename": server_name,
-            "token": self.fetch_token(type="csrf"),
+            "filename": servername,
+            "token": await self.fetch_token(type="csrf"),
+            "text": text,
+            "comment": comment,
             "ignorewarnings": True,
             "watchlist": "nochange",
             "async": True,
@@ -170,18 +174,19 @@ class Bot:
             key = str(key)
             value = str(value)
             data[key] = value
-        FILE = {'file':(os.path.basename(file_path),
-                        open(file_path, 'rb'),
-                        'multipart/form-data')}
+        FILE = {'file': (os.path.basename(filepath),
+                         open(filepath, 'rb'),
+                         'multipart/form-data')}
         act = await self.client.post(url=self.api, data=data, headers=self.headers, files=FILE)
         act = act.json()
         if act.get('upload', {}).get("result", None) != None:
             if act['upload']['result'] == "Success":
                 logger.success(
-                    f'成功上传本地文件 {file_path} 至 {self.sitename}:{server_name}。')
+                    f'成功上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]。')
                 return True
             else:
-                logger.debug(act)
+                logger.debug(
+                    f"上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]失败。\n{act}")
                 return False
         else:
             logger.debug(act)
@@ -189,7 +194,7 @@ class Bot:
 
     async def purge(self, title: str, **kwargs) -> None:
         '''刷新页面'''
-        
+
         data = {
             "action": "purge",
             "titles": title,
@@ -201,11 +206,11 @@ class Bot:
             data[key] = value
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
-        logger.success(f"成功刷新页面 [[{title}]].")
+        logger.success(f"成功刷新页面 [[{title}]]。")
 
     async def parse(self, title, **kwargs):
         '''解析'''
-        
+
         data = {
             "format": "json",
             "page": title,
@@ -228,7 +233,7 @@ class Bot:
             return WikiSectionList(result_list)
         else:
             return False
-            logger.warning(f'页面 [[{title}]] 中没有子章节!')
+            logger.warning(f'页面 [[{title}]] 中没有子章节！')
 
     async def deal_flow(self, title, cotmoderationState, cotreason="标记"):
         data = {
