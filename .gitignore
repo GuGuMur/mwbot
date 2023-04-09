@@ -181,5 +181,7 @@ cython_debug/
 
 ## mwbot
 .test.py
+test.py
 dev.md
 /gutest
+/templates/

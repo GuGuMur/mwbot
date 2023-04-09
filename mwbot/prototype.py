@@ -5,14 +5,14 @@ import mwparserfromhell
 # import regex as re
 
 class WikiSectionList(ABC):
-    '''用于Bot.get_section()方法的字典类
-    覆写了dict.index()方法，输出可直接用于edit(section)的值'''
+    '''用于Bot.get_sections()方法的字典类
+    覆写了dict.index()方法，输出可直接用于bot.edit(section)的值'''
 
     def __init__(self, wl: list):
-        self.wd = wl
+        self.wl = wl
 
-    def index(num: str) -> int:
-        return self.wl.index(num)+1
+    def index(self, name: str) -> int:
+        return self.wl.index(name)+1
 
     def __str__(self):
         return str(self.wl)

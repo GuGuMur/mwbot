@@ -13,3 +13,4 @@
 * 更多
   * [示例(Github)](https://github.com/GuGuMur/mwbot/tree/main/examples)
   * [Mediawiki](https://www.mediawiki.org)
+  * [Jinja](https://jinja.palletsprojects.com/en/3.1.x/)

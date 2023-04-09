@@ -55,14 +55,14 @@ class Bot:
         '''登录
         :use: await bot.login()'''
 
-        login_data = {
+        data = {
             'action': "login",
             'lgname': self.username,
             'lgpassword': self.password,
             'lgtoken': await self.fetch_token(type="login"),
             'format': "json"
         }
-        login = await self.client.post(url=self.api, data=login_data, headers=self.headers)
+        login = await self.client.post(url=self.api, data=data, headers=self.headers)
         login = login.json()
         if login['login']['result'] == "Success":
             logger.success(
@@ -174,9 +174,9 @@ class Bot:
             key = str(key)
             value = str(value)
             data[key] = value
-        FILE = {'file': (os.path.basename(filepath),
-                         open(filepath, 'rb'),
-                         'multipart/form-data')}
+        FILE = {'file':(os.path.basename(filepath),
+                        open(filepath, 'rb'),
+                        'multipart/form-data')}
         act = await self.client.post(url=self.api, data=data, headers=self.headers, files=FILE)
         act = act.json()
         if act.get('upload', {}).get("result", None) != None:

@@ -4,7 +4,7 @@ mwbot是一个基于Python的异步 Mediawiki API库，同时封装了用于[PRT
 ## 快速使用
 ### 前备工作
 #### 安装
-    pip install -i https://pypi.org/simple/ mwbot
+    pip install mwbot -i https://pypi.org/simple/
 #### 获取Bot应有的参数
 1. 前往对应wiki的 特殊:版本 页面获取wiki的index.php, api.php的路径
 2. 前往对应wiki的 特殊:BotPasswords 创建一套机器人密码

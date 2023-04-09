@@ -37,13 +37,23 @@ def get_page_links_from_pagelist_txt(folder=os.path.dirname(os.path.abspath(__fi
     return pagelist
 
 
-def render_template(T_NAME: str, **kwargs) -> str:
-    '''从 bot程序 目录下的 /templates 目录中选择Jinja2模板并渲染
+class templates_env:
+    '''创建一个模板的渲染Environment，
     .. code-block:: python
-        utils.render_template(T_NAME="test.jinja",name="Test")
-    :param T_NAME: ./templates 目录中的模板文件名
-    :param **kwargs: 对应模板要求的参数
-    :return: 渲染后的结果'''
-    T_ENV = Environment(loader=FileSystemLoader(
-        f'{os.path.dirname(os.path.abspath(__file__))}/templates'))
-    return T_ENV.get_template(T_NAME).render(**kwargs).strip()
+            ENV = utils.templates_env
+    :params: DIR_PATH(`str`)：环境目录，默认为`./templates`
+    :params: **kwargs : Jinja.Environment所需的参数，参考[https://jinja.palletsprojects.com/en/3.0.x/api/#jinja2.Environment]
+    :return: `dict` 
+    默认位置为 `./templates `'''
+
+    def __init__(self, DIR_PATH:str=f'{os.path.dirname(os.path.abspath(__file__))}/templates',**kwargs):
+        self.T_ENV = Environment(loader=FileSystemLoader(DIR_PATH), **kwargs)
+
+    def render(self, T_NAME:str, **kwargs) -> str:
+        '''选择Jinja2模板并渲染
+        .. code-block:: python
+            utils.render_template(T_NAME="test.jinja", name="Test")
+        :param T_NAME: 目录中的模板文件名
+        :param **kwargs: 对应模板要求的参数
+        :return: 渲染后的结果'''
+        return self.T_ENV.get_template(T_NAME).render(**kwargs).strip()
