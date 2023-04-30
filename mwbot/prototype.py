@@ -24,8 +24,8 @@ class gen_wikitext:
     def __init__(self):
         self.txt: str = """"""
 
-    def add_title(self, po: int, title: str):
-        self.txt += "="*po + title + "="*po + "\n"
+    def add_title(self, times: int, title: str):
+        self.txt += "="*times + title + "="*times + "\n"
 
     def add_text(self, text: str):
         self.txt += (text + "\n")
@@ -37,23 +37,20 @@ class gen_wikitext:
 class gen_tem:
     '''生成wikitext-template'''
 
-    def __init__(self, title: str):
-        self.txt = "{{"+title
-        self.enter_int = 0
+    def __init__(self, title: str, with_enter: bool = True):
+        self.params = []
+        self.with_enter = with_enter
+        if self.with_enter: self.txt += "\n"
 
-    def add_par(self, name: str = "", txt: str = "", enter: bool = True):
-        '''添加一行参数。'''
-        if bool == True:
-            self.txt += "\n"
-            self.enter_int += 1
+    def add_par(self, name: str = "", txt: str = ""):
+        '''添加一行参数'''
         if name:
-            self.txt += f"|{name}={txt}"
+            self.params.append(f"|{name}={txt}")
         else:
-            self.txt += f"|{txt}"
+            self.params.append(f"|{txt}")
 
     def result(self) -> str:
         '''输出结果'''
-        if self.enter_int != 0:
-            self.txt += "\n"
-        self.txt += "}}"
-        return self.txt
+        enter_key = ""
+        if self.with_enter: enter_key="\n"
+        return "{{" + enter_key.join(self.params) + "}}"

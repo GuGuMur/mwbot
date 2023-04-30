@@ -10,7 +10,7 @@ from typing import Union
 GameDataPosition = "/home/bot/ArknightsGameData/zh_CN/gamedata"
 
 
-def read_ark_file(filename):
+def read_ark_file(filename) -> dict:
     return json.loads(Path(f"{GameDataPosition}/{filename}").read_text())
 
 
@@ -41,7 +41,7 @@ def get_stage_id(content):
     templates = wikicode.filter_templates()
     for i in templates:
         if i.name.matches('普通关卡信息') or i.name.matches('剿灭关卡信息'):
-            return str(temp.get('关卡id').value).strip()
+            return str(i.get('关卡id').value).strip()
 
 
 def get_stage_info(content):
@@ -56,4 +56,4 @@ def get_stage_info(content):
 
 
 def get_char_name(id: str) -> str:
-    return read_ark_file("excel/character_table")[id]["name"]
+    return read_ark_file("excel/character_table.json")[id]["name"]
