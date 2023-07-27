@@ -14,7 +14,10 @@ jobs:
     permissions:
         id-token: write
     steps:
-      # Retrieve your distributions here
+
+      - uses: actions/checkout@v3
+
+      - uses: pdm-project/setup-pdm@v3
 
       - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        run: pdm publish
