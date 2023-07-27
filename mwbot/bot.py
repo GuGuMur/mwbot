@@ -8,74 +8,83 @@ from .prototype import WikiSectionList
 
 
 class Bot:
-    '''(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
+    """(https://www.mediawiki.org/wiki/API:Main_page/zh)[Mediawiki文档]
     Bot根程序。
     :param sitename(`str`) : 站点名称
     :param index(`str`) : index.php目录
     :param api(`str`) : index.php路径
     :param index(`str`) : api.php路径
     :param username(`str`) : 用户名
-    :param password(`str`) : 用户密码'''
+    :param password(`str`) : 用户密码"""
 
     # 成员变量
-    def __init__(self, sitename: str, api: str, index: str, username: str, password: str):
-        '''同步构造函数'''
+    def __init__(
+        self, sitename: str, api: str, index: str, username: str, password: str
+    ):
+        """同步构造函数"""
         self.sitename = sitename
         self.api = api
         self.index = index
         self.username = username
         self.password = password
-        timeout = httpx.Timeout(
-            10.0, connect=60.0, read=60.0, write=60.0, pool=60.0)
+        timeout = httpx.Timeout(10.0, connect=60.0, read=60.0, write=60.0, pool=60.0)
         self.client = httpx.AsyncClient(verify=False, timeout=timeout)
-        self.headers = {
-            'User-Agent': f"{self.username}/mwbot"}
+        self.headers = {"User-Agent": f"{self.username}/mwbot"}
 
     async def __aexit__(self):
-        '''异步析构函数'''
+        """异步析构函数"""
         await self.client.aclose()
 
-    async def fetch_token(self, type: str) -> str:
-        '''根据不同的type类型返回对应的token
-        :param: type(`str`)  token的类型'''
+    async def call_get_api(self, action: str, **kwargs) -> dict:
+        data = {"action": action, "format": "json"}
+        data.update(kwargs)
 
-        data = {
-            'action': "query",
-            'meta': "tokens",
-            'type': type,
-            'format': "json"
-        }
+        text = await self.client.get(url=self.api, data=data, headers=self.headers)
+        return text.json()
+
+    async def call_post_api(self, action: str, **kwargs) -> dict:
+        data = {"action": action, "format": "json"}
+        data.update(kwargs)
+
+        text = await self.client.post(url=self.api, data=data, headers=self.headers)
+        return text.json()
+
+    async def fetch_token(self, type: str) -> str:
+        """根据不同的type类型返回对应的token
+        :param: type(`str`)  token的类型"""
+
+        data = {"action": "query", "meta": "tokens", "type": type, "format": "json"}
         token = await self.client.post(url=self.api, data=data)
         token.raise_for_status()
         token = token.json()
         location = type + "token"
-        return token['query']['tokens'][location]
+        return token["query"]["tokens"][location]
 
     async def login(self) -> None:
-        '''登录
-        :use: await bot.login()'''
+        """登录
+        :use: await bot.login()"""
 
         data = {
-            'action': "login",
-            'lgname': self.username,
-            'lgpassword': self.password,
-            'lgtoken': await self.fetch_token(type="login"),
-            'format': "json"
+            "action": "login",
+            "lgname": self.username,
+            "lgpassword": self.password,
+            "lgtoken": await self.fetch_token(type="login"),
+            "format": "json",
         }
         login = await self.client.post(url=self.api, data=data, headers=self.headers)
         login = login.json()
-        if login['login']['result'] == "Success":
-            logger.success(
-                f'您已登录至{self.sitename}, {login["login"]["lgusername"]}！')
+        if login["login"]["result"] == "Success":
+            logger.success(f'您已登录至{self.sitename}, {login["login"]["lgusername"]}！')
         else:
             raise error.mwbotLoginError(
-                f"用户{self.username}登录至{self.sitename}中出现了错误。\n{login}")
+                f"用户{self.username}登录至{self.sitename}中出现了错误。\n{login}"
+            )
 
     async def get_data(self, title: str) -> dict:
-        '''获取页面的数据
+        """获取页面的数据
         :use: data = await bot.get_data(title)
         :params: title(`str`)：页面名
-        :return: `dict` '''
+        :return: `dict`"""
 
         data = {
             "action": "query",
@@ -84,20 +93,25 @@ class Bot:
             "rvslots": "*",
             "rvprop": "content",
             "formatversion": 2,
-            "format": "json"
+            "format": "json",
         }
         text = await self.client.post(url=self.api, data=data, headers=self.headers)
         text = text.json()
         text = text["query"]["pages"][0]
         return text
 
-    async def get_page_text(self, title: str, section: Union[str, int] = '') -> Union[str, None]:
-        '''获取页面中的文本
+    async def get_page_text(
+        self, title: str, section: Union[str, int] = ""
+    ) -> Union[str, None]:
+        """获取页面中的文本
         :use: text = bot.get_page_text(title)
         :params: title(`str`)：页面标题
         :params: section(`Union[str,int]`)：*可选项* 编辑章节号
-        :return: str/None '''
-        act = await self.client.post(url=f"{self.index}?action=raw&title={title}&section={str(section)}", headers=self.headers)
+        :return: str/None"""
+        act = await self.client.post(
+            url=f"{self.index}?action=raw&title={title}&section={str(section)}",
+            headers=self.headers,
+        )
         if act.status_code == 404:
             logger.warning(f"请检查get_page_text传入的页面是否在{self.sitename}存在。")
             return None
@@ -105,13 +119,13 @@ class Bot:
             return str(act.text)
 
     async def edit_page(self, title: str, **kwargs):
-        '''编辑一个页面
+        """编辑一个页面
         :use: await bot.edit_page(title,text,summary)
         :params: title(`str`) : 编辑页面的标题，不自动重定向
         :params: text(`str`) : 编辑页面的内容
         :params: summary(`str`) : 编辑摘要
         :params: ...
-        :return: None '''
+        :return: None"""
 
         data = {
             "action": "edit",
@@ -121,15 +135,12 @@ class Bot:
             "token": await self.fetch_token(type="csrf"),
             "title": title,
         }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求。")
         act: dict = act.json()
-        if act.get('edit', {}).get("result", None) != None:
-            if act['edit']['result'] == "Success":
+        if act.get("edit", {}).get("result", None) != None:
+            if act["edit"]["result"] == "Success":
                 logger.success(f'成功编辑页面 [[{data["title"]}]]。')
             else:
                 logger.debug(act)
@@ -139,12 +150,12 @@ class Bot:
             return False
 
     async def create_page(self, title: str, text: str, summary: str = "") -> bool:
-        '''创建页面
+        """创建页面
         :use: bot.create_page(title,text,summary)
         :params: title(`str`) : 创建页面的标题
         :params: text(`str`) : 创建页面的内容
         :params: summary(`str`) : 编辑摘要
-        :return: bool：指示创建是否成功（True为成功，False为失败）'''
+        :return: bool：指示创建是否成功（True为成功，False为失败）"""
 
         deal = await self.get_data(title=title)
         if "missing" in deal:
@@ -154,9 +165,10 @@ class Bot:
             logger.warning(f"跳过创建[[{title}]]。")
             return False
 
-    async def upload_local(self, filepath, servername=None,
-                           text="", comment="", **kwargs) -> bool:
-        '''从本地上传一个文件。'''
+    async def upload_local(
+        self, filepath, servername=None, text="", comment="", **kwargs
+    ) -> bool:
+        """从本地上传一个文件。"""
         if servername is None:
             servername = os.path.basename(filepath)
         data = {
@@ -170,70 +182,61 @@ class Bot:
             "async": True,
             "format": "json",
         }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
-        FILE = {'file':(os.path.basename(filepath),
-                        open(filepath, 'rb'),
-                        'multipart/form-data')}
-        act = await self.client.post(url=self.api, data=data, headers=self.headers, files=FILE)
+        data.update(kwargs)
+        FILE = {
+            "file": (
+                os.path.basename(filepath),
+                open(filepath, "rb"),
+                "multipart/form-data",
+            )
+        }
+        act = await self.client.post(
+            url=self.api, data=data, headers=self.headers, files=FILE
+        )
         act = act.json()
-        if act.get('upload', {}).get("result", None) != None:
-            if act['upload']['result'] == "Success":
+        if act.get("upload", {}).get("result", None) != None:
+            if act["upload"]["result"] == "Success":
                 logger.success(
-                    f'成功上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]。')
+                    f"成功上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]。"
+                )
                 return True
             else:
                 logger.debug(
-                    f"上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]失败。\n{act}")
+                    f"上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]失败。\n{act}"
+                )
                 return False
         else:
             logger.debug(act)
             return False
 
     async def purge(self, title: str, **kwargs) -> None:
-        '''刷新页面'''
+        """刷新页面"""
 
-        data = {
-            "action": "purge",
-            "titles": title,
-            "format": "json"
-        }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data = {"action": "purge", "titles": title, "format": "json"}
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         logger.success(f"成功刷新页面 [[{title}]]。")
 
     async def parse(self, title, **kwargs):
-        '''解析'''
+        """解析"""
 
-        data = {
-            "format": "json",
-            "page": title,
-            "action": "parse"
-        }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data = {"format": "json", "page": title, "action": "parse"}
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         return act.json()
 
     async def get_sections(self, title: str) -> Union[WikiSectionList, bool]:
-        result = await self.parse(title=title, prop='sections')
-        result = result['parse']['sections']
+        result = await self.parse(title=title, prop="sections")
+        result = result["parse"]["sections"]
         result_list = []
         for i in result:
-            result_list.append(i['line'])
+            result_list.append(i["line"])
         if result_list:
             return WikiSectionList(result_list)
         else:
             return False
-            logger.warning(f'页面 [[{title}]] 中没有子章节！')
+            logger.warning(f"页面 [[{title}]] 中没有子章节！")
 
     async def deal_flow(self, title, cotmoderationState, cotreason="标记"):
         data = {
@@ -243,11 +246,14 @@ class Bot:
             "cotmoderationState": cotmoderationState,
             "cotreason": cotreason,
             "format": "json",
-            "token": self.fetch_token(type="csrf")
+            "token": self.fetch_token(type="csrf"),
         }
-        act = await self.client.post(url=self.api, data=data, headers=self.headers).json()
+        act = await self.client.post(
+            url=self.api, data=data, headers=self.headers
+        ).json()
         logger.success(
-            f"{cotmoderationState} the flow {title} successfully.({cotreason})")
+            f"{cotmoderationState} the flow {title} successfully.({cotreason})"
+        )
 
     async def reply_flow(self, title, content):
         data = {
@@ -258,25 +264,37 @@ class Bot:
             "repcontent": str(content),
             "repformat": "wikitext",
             "format": "json",
-            "token": self.fetch_token(type="csrf")
+            "token": self.fetch_token(type="csrf"),
         }
-        act = await self.client.post(url=self.api, data=data, headers=self.headers).json()
+        act = await self.client.post(
+            url=self.api, data=data, headers=self.headers
+        ).json()
         logger.success(f"Reply the flow {title} successfully.")
 
-    async def rc(self, namespace: str = "0", limit: Union[str, int] = 50, days: Union[str, int] = 5):
+    async def rc(
+        self,
+        namespace: str = "0",
+        limit: Union[str, int] = 50,
+        days: Union[str, int] = 5,
+    ):
         from xmltodict import parse as XMLParse
+
         data = {
             "action": "feedrecentchanges",
             "days": days,
             "feedformat": "atom",
             "limit": limit,
             "namespace": namespace,
-            "urlversion": "2"
+            "urlversion": "2",
         }
-        act = await self.client.post(url=self.index, data=data, headers=self.headers).json()
+        act = await self.client.post(
+            url=self.index, data=data, headers=self.headers
+        ).json()
         return XMLParse(act.content)["feed"]["entry"]
 
-    async def search(self, txt: str, namespace: str = "0", sroffset: str = "0", **kwargs):
+    async def search(
+        self, txt: str, namespace: str = "0", sroffset: str = "0", **kwargs
+    ):
         data = {
             "action": "query",
             "list": "search",
@@ -288,10 +306,7 @@ class Bot:
             "sroffset": sroffset,
             "format": "json",
         }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         rl = []
@@ -299,7 +314,9 @@ class Bot:
             for i in act["query"]["search"]:
                 rl.append(i["title"])
         if "continue" in act:
-            temp = await self.search(txt=txt, namespace=namespace, sroffset=(int(sroffset)+1), **kwargs)
+            temp = await self.search(
+                txt=txt, namespace=namespace, sroffset=(int(sroffset) + 1), **kwargs
+            )
             for i in temp:
                 rl.append(i)
         return rl
@@ -315,26 +332,27 @@ class Bot:
         act = act.json()
         return act["query"]
 
-    async def protect(self, title, protections, expiry: str = "infinite", reason: str = "", **kwargs):
+    async def protect(
+        self, title, protections, expiry: str = "infinite", reason: str = "", **kwargs
+    ):
         data = {
             "action": "protect",
             "format": "json",
             "title": title,
             "protections": protections,
             "expiry": expiry,
-            "reason": reason
+            "reason": reason,
         }
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data.update(kwargs)
         data["token"] = await self.fetch_token(type="csrf")
         data["reason"] += " //Protect by Bot."
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         return act["protect"]
 
-    async def user_contributions(self, user: str, uccontinue: str = "", **kwargs) -> list:
+    async def user_contributions(
+        self, user: str, uccontinue: str = "", **kwargs
+    ) -> list:
         data = {
             "action": "query",
             "list": "usercontribs",
@@ -342,14 +360,11 @@ class Bot:
             "uclimit": "max",
             "ucprop": "title|ids|size|sizediff|tags|timestamp",
             "ucnamespace": "*",
-            "format": "json"
+            "format": "json",
         }
         if uccontinue != "":
             data["uccontinue"] = uccontinue
-        for key, value in kwargs.items():
-            key = str(key)
-            value = str(value)
-            data[key] = value
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         rl = []
@@ -357,7 +372,9 @@ class Bot:
             for i in act["query"]["usercontribs"]:
                 rl.append(i)
         if "continue" in act:
-            temp = await self.user_contributions(user=user, uccontinue=act["continue"]["uccontinue"], **kwargs)
+            temp = await self.user_contributions(
+                user=user, uccontinue=act["continue"]["uccontinue"], **kwargs
+            )
             for i in temp:
                 rl.append(i)
         return rl
