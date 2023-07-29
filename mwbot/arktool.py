@@ -2,8 +2,7 @@
 import mwparserfromhell
 import ujson as json
 from typing import Union
-
-# import re
+import re
 # from loguru import logger
 # import os
 # from pathlib import Path
@@ -46,7 +45,7 @@ def catch_item_template(id: str, count: int) -> str:
     )
 
 
-def get_stage_id(content):
+def get_stage_id(content)->str:
     wikicode = mwparserfromhell.parse(content)
     templates = wikicode.filter_templates()
     for i in templates:
@@ -54,16 +53,23 @@ def get_stage_id(content):
             return str(i.get("关卡id").value).strip()
 
 
-def get_stage_info(content):
-    stage_id = get_stage_id(content=content)
-    stage_id_location = read_ark_file("excel/stage_table.json")["stages"][stage_id][
-        "levelId"
-    ]
-    if stage_id_location == None:
+def get_stage_info(content:str):
+    stage_id:str = get_stage_id(content=content)
+    if stage_id == "":
         return None
+    elif match:=re.match(r"^ro(\d+)_", stage_id):
+        number = int(match.group(1))
+        stage_location = read_ark_file("excel/roguelike_topic_table.json")["details"][f"rogue_{number}"]["stages"][stage_id]["levelId"]
+    elif stage_id.startswith("mem_"):
+        for k,v in read_ark_file("excel/handbook_info_table.json")["handbookStageData"].items():
+            if v["stageId"] == stage_id:
+                stage_location = v["levelId"]
+                break
+    elif stage_id.startswith("tower_"):
+        stage_location = read_ark_file("excel/climb_tower_table.json")["levels"][stage_id]["levelId"]
     else:
-        stage_id_location = stage_id_location.lower()
-        return read_ark_file("gamedata/levels/{stage_id_location}.json")
+        stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
+    return read_ark_file(f"levels/{stage_location.lower()}.json")
 
 
 class char:

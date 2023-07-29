@@ -22,20 +22,17 @@ def get_all_links(content: str) -> list:
     return [i[0] for i in page_list]
 
 
-def get_page_links_from_pagelist_txt(
-    folder=os.path.dirname(os.path.abspath(__file__)),
-) -> list:
+def get_page_links_from_pagelist_txt(folder=str(Path(__file__).parent),) -> list:
     """从bot文件同目录下的pagelist.txt读取每行对应的页面名并返回列表。
 
     .. code-block:: python
         pagelist = utils.get_page_links_from_pagelist_txt()
     :param folder: [可选项]pagelist.txt所在的文件夹
     :returns: list"""
-    classes_path = os.path.expanduser(f"{folder}/pagelist.txt")
-    with open(f"{folder}/pagelist.txt", "r", encoding="UTF-8") as f:
+    file_path = str(Path(folder)/"pagelist.txt")
+    with open(file_path, "r", encoding="UTF-8") as f:
         pagelist = f.readlines()
-    pagelist = [c.rstrip() for c in pagelist]
-    return pagelist
+    return [l.rstrip() for l in pagelist]
 
 
 class templates_env:
