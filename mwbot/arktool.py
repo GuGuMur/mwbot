@@ -55,6 +55,7 @@ def get_stage_id(content)->str:
 
 def get_stage_info(content:str):
     stage_id:str = get_stage_id(content=content)
+    # 处理关卡id对应的文件路径
     if stage_id == "":
         return None
     elif match:=re.match(r"^ro(\d+)_", stage_id):
@@ -69,7 +70,11 @@ def get_stage_info(content:str):
         stage_location = read_ark_file("excel/climb_tower_table.json")["levels"][stage_id]["levelId"]
     else:
         stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
-    return read_ark_file(f"levels/{stage_location.lower()}.json")
+    # 返回文件
+    if stage_location:
+        return read_ark_file(f"levels/{stage_location.lower()}.json")
+    else:
+        return ""
 
 
 class char:
