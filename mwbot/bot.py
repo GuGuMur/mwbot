@@ -1,5 +1,4 @@
 import httpx
-import ujson as json
 from loguru import logger
 import os
 from mwbot import error
@@ -113,7 +112,7 @@ class Bot:
             headers=self.headers,
         )
         if act.status_code == 404:
-            logger.warning(f"请检查get_page_text传入的页面是否在{self.sitename}存在。")
+            logger.warning(f"请检查get_page_text传入的页面[[{title}]]是否在{self.sitename}存在。")
             return None
         else:
             return str(act.text)
@@ -139,7 +138,7 @@ class Bot:
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求。")
         act: dict = act.json()
-        if act.get("edit", {}).get("result", None) != None:
+        if act.get("edit", {}).get("result", None) is not None:
             if act["edit"]["result"] == "Success":
                 logger.success(f'成功编辑页面 [[{data["title"]}]]。')
             else:
@@ -194,7 +193,7 @@ class Bot:
             url=self.api, data=data, headers=self.headers, files=FILE
         )
         act = act.json()
-        if act.get("upload", {}).get("result", None) != None:
+        if act.get("upload", {}).get("result", None) is not None:
             if act["upload"]["result"] == "Success":
                 logger.success(
                     f"成功上传本地文件 {filepath} 至 [[{self.sitename}:文件:{servername}]]。"
@@ -248,9 +247,8 @@ class Bot:
             "format": "json",
             "token": self.fetch_token(type="csrf"),
         }
-        act = await self.client.post(
-            url=self.api, data=data, headers=self.headers
-        ).json()
+        act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act = act.json()
         logger.success(
             f"{cotmoderationState} the flow {title} successfully.({cotreason})"
         )
@@ -266,9 +264,8 @@ class Bot:
             "format": "json",
             "token": self.fetch_token(type="csrf"),
         }
-        act = await self.client.post(
-            url=self.api, data=data, headers=self.headers
-        ).json()
+        act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act = act.json()
         logger.success(f"Reply the flow {title} successfully.")
 
     async def rc(
@@ -310,7 +307,7 @@ class Bot:
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         rl = []
-        if act["query"]["search"] != False:
+        if act["query"]["search"] is not False:
             for i in act["query"]["search"]:
                 rl.append(i["title"])
         if "continue" in act:
@@ -368,7 +365,7 @@ class Bot:
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         rl = []
-        if act["query"]["usercontribs"] != False:
+        if act["query"]["usercontribs"] is not False:
             for i in act["query"]["usercontribs"]:
                 rl.append(i)
         if "continue" in act:
