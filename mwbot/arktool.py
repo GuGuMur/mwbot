@@ -68,6 +68,8 @@ def get_stage_info(content:str):
                 break
     elif stage_id.startswith("tower_"):
         stage_location = read_ark_file("excel/climb_tower_table.json")["levels"][stage_id]["levelId"]
+    elif stage_id.startswith("act42d0_"):
+        stage_location = read_ark_file("excel/activity_table.json")["activity"]["TYPE_ACT42D0"]["act42d0"]["stageInfoData"][stage_id]["levelId"]
     else:
         stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
     # 返回文件
