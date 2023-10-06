@@ -20,6 +20,10 @@ class WikiSectionList(ABC):
     def __str__(self):
         return str(self.wl)
 
+    @property
+    def list(self):
+        return self.wl
+
 
 class gen_wikitext:
     """生成wikitext"""
