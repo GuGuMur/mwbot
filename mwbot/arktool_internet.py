@@ -49,11 +49,11 @@ class arktool:
         res = await self.read_ark_file("excel/item_table.json")
         return res["items"][str(id)]["name"]
 
-    async def deal_item_info(self, type: str, id: str, droptype: int) -> str:
+    async def deal_item_info(self, type: str, id: str, droptype: int | str) -> str:
         res = await self.read_ark_file("excel/item_table.json")
         link = res["items"][id]
         name = link["name"]
-        if droptype == 8:
+        if droptype == 8 or droptype == "COMPLETE":
             kind = "三星获得"
         return f"{name}:{kind}"
 
