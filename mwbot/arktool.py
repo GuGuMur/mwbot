@@ -28,7 +28,7 @@ def get_item_name(id: Union[str, int]) -> str:
     return read_ark_file("excel/item_table.json")["items"][str(id)]["name"]
 
 
-def deal_item_info(type: str, id: str, droptype: int | str) -> str:
+def deal_item_info(type: str, id: str, droptype: Union[str, int]) -> str:
     link = read_ark_file("excel/item_table.json")["items"][id]
     name = link["name"]
     if droptype == 8 or droptype == "COMPLETE":

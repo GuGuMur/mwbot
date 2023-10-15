@@ -49,7 +49,7 @@ class arktool:
         res = await self.read_ark_file("excel/item_table.json")
         return res["items"][str(id)]["name"]
 
-    async def deal_item_info(self, type: str, id: str, droptype: int | str) -> str:
+    async def deal_item_info(self, type: str, id: str, droptype: Union[str, int]) -> str:
         res = await self.read_ark_file("excel/item_table.json")
         link = res["items"][id]
         name = link["name"]
