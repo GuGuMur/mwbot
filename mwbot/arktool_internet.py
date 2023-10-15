@@ -7,7 +7,7 @@ class arktool:
     def __init__(
         self,
         domains: list = [
-            "https://raw.githubusercontent.com",
+            "https://raw.githubusercontent.com/",
             "https://raw.kgithub.com/",
             "https://ghproxy.com/https://raw.githubusercontent.com/",
             "https://fastly.jsdelivr.net/gh/",
@@ -77,9 +77,7 @@ class arktool:
         elif match := re.match(r"^ro(\d+)_", stage_id):
             number = int(match.group(1))
             file = await self.read_ark_file("excel/roguelike_topic_table.json")
-            stage_location = file["details"][f"rogue_{number}"]["stages"][stage_id][
-                "levelId"
-            ]
+            stage_location = file["details"][f"rogue_{number}"]["stages"][stage_id]["levelId"]
         elif stage_id.startswith("mem_"):
             file = await self.read_ark_file("excel/handbook_info_table.json")
             for k, v in file["handbookStageData"].items():
@@ -91,9 +89,7 @@ class arktool:
             stage_location = file["levels"][stage_id]["levelId"]
         elif stage_id.startswith("act42d0_"):
             file = await self.read_ark_file("excel/activity_table.json")
-            stage_location = file["activity"]["TYPE_ACT42D0"]["act42d0"][
-                "stageInfoData"
-            ][stage_id]["levelId"]
+            stage_location = file["activity"]["TYPE_ACT42D0"]["act42d0"]["stageInfoData"][stage_id]["levelId"]
         else:
             file = await self.read_ark_file("excel/stage_table.json")
             stage_location = file["stages"][stage_id]["levelId"]

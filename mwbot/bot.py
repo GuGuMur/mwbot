@@ -217,6 +217,39 @@ class Bot:
         act = act.json()
         logger.success(f"成功刷新页面 [[{title}]]。")
 
+    async def move_page(self, frompage: str, topage: str, **kwargs):
+        """移动一个页面
+        :use: await bot.move_page(frompage,topage)
+        :params: frompage(`str`) : 移动的页面
+        :params: topage(`str`) : 到的页面
+        :params: reason(`str`) : 移动原因
+        :params: movetalk(`str`) : 重命名讨论页，如果存在
+        :params: movesubpages(`str`) : 重命名子页面，如果存在
+        :params: noredirect(`str`) : 不创建重定向
+        :params: ...
+        :return: None"""
+
+        data = {
+            "action": "move",
+            "token": await self.fetch_token(type="csrf"),
+            "from": frompage,
+            "to": topage,
+            "format": "json",
+        }
+        data.update(kwargs)
+        act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        logger.info(f"已向{self.sitename}发送移动页面[[{frompage}]]至[[{topage}]]的请求。")
+        act: dict = act.json()
+        if act.get("edit", {}).get("result", None) is not None:
+            if act["edit"]["result"] == "Success":
+                logger.success(f'成功移动页面[[{frompage}]]至[[{topage}]]！')
+            else:
+                logger.debug(act)
+                return False
+        else:
+            logger.debug(act)
+            return False
+
     async def parse(self, title, **kwargs):
         """解析"""
 

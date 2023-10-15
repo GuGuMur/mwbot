@@ -61,28 +61,18 @@ def get_stage_info(content: str):
         return None
     elif match := re.match(r"^ro(\d+)_", stage_id):
         number = int(match.group(1))
-        stage_location = read_ark_file("excel/roguelike_topic_table.json")["details"][
-            f"rogue_{number}"
-        ]["stages"][stage_id]["levelId"]
+        stage_location = read_ark_file("excel/roguelike_topic_table.json")["details"][f"rogue_{number}"]["stages"][stage_id]["levelId"]
     elif stage_id.startswith("mem_"):
-        for k, v in read_ark_file("excel/handbook_info_table.json")[
-            "handbookStageData"
-        ].items():
+        for k, v in read_ark_file("excel/handbook_info_table.json")["handbookStageData"].items():
             if v["stageId"] == stage_id:
                 stage_location = v["levelId"]
                 break
     elif stage_id.startswith("tower_"):
-        stage_location = read_ark_file("excel/climb_tower_table.json")["levels"][
-            stage_id
-        ]["levelId"]
+        stage_location = read_ark_file("excel/climb_tower_table.json")["levels"][stage_id]["levelId"]
     elif stage_id.startswith("act42d0_"):
-        stage_location = read_ark_file("excel/activity_table.json")["activity"][
-            "TYPE_ACT42D0"
-        ]["act42d0"]["stageInfoData"][stage_id]["levelId"]
+        stage_location = read_ark_file("excel/activity_table.json")["activity"]["TYPE_ACT42D0"]["act42d0"]["stageInfoData"][stage_id]["levelId"]
     else:
-        stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id][
-            "levelId"
-        ]
+        stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
     # 返回文件
     if stage_location:
         return read_ark_file(f"levels/{stage_location.lower()}.json")
