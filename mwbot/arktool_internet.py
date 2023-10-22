@@ -27,6 +27,18 @@ class arktool:
         """异步析构函数"""
         await self.client.aclose()
 
+    async def read_ark_text(self, filename: str) -> str:
+        for i in self.domains:
+            try:
+                res = await self.client.get(
+                    url=f"{i}/Kengxxiao/ArknightsGameData/master/zh_CN/gamedata/{filename}",
+                    headers=self.headers,
+                )
+                return res.text
+            except:
+                pass
+        return None
+
     async def read_ark_file(self, filename: str) -> dict:
         for i in self.domains:
             try:

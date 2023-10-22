@@ -11,6 +11,10 @@ import re
 
 GameDataPosition = "/home/bot/ArknightsGameData/zh_CN/gamedata"
 
+def read_ark_text(filename: str) -> str:
+    with open(f"{GameDataPosition}/{filename}", "r", encoding="utf-8") as f:
+        content = f.read()
+    return content
 
 def read_ark_file(filename: str) -> dict:
     with open(f"{GameDataPosition}/{filename}", "r", encoding="utf-8") as f:
