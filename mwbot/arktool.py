@@ -56,6 +56,7 @@ def get_stage_id(content) -> str:
     for i in templates:
         if i.name.matches("普通关卡信息") or i.name.matches("剿灭关卡信息"):
             return str(i.get("关卡id").value).strip()
+    return None
 
 
 def get_stage_info(content: str):

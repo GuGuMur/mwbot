@@ -79,6 +79,7 @@ class arktool:
         for i in templates:
             if i.name.matches("普通关卡信息") or i.name.matches("剿灭关卡信息"):
                 return str(i.get("关卡id").value).strip()
+        return None
 
     async def get_stage_info(self, content: str):
         stage_id: str = self.get_stage_id(content=content)
