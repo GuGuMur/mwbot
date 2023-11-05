@@ -286,7 +286,7 @@ class Bot:
             f"{cotmoderationState} the flow {title} successfully.({cotreason})"
         )
 
-    async def reply_flow(self, title, content):
+    async def reply_flow(self, title, content, **kwargs):
         data = {
             "action": "flow",
             "submodule": "reply",
@@ -295,8 +295,9 @@ class Bot:
             "repcontent": str(content),
             "repformat": "wikitext",
             "format": "json",
-            "token": self.fetch_token(type="csrf"),
+            "token": await self.fetch_token(type="csrf"),
         }
+        data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
         logger.success(f"Reply the flow {title} successfully.")
