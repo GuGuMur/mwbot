@@ -278,7 +278,7 @@ class Bot:
             "cotmoderationState": cotmoderationState,
             "cotreason": cotreason,
             "format": "json",
-            "token": self.fetch_token(type="csrf"),
+            "token": await self.fetch_token(type="csrf"),
         }
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         act = act.json()
