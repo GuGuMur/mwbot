@@ -28,7 +28,7 @@ class Bot:
         self.password = password
         timeout = httpx.Timeout(10.0, connect=60.0, read=60.0, write=60.0, pool=60.0)
         self.client = httpx.AsyncClient(verify=False, timeout=timeout)
-        self.headers = {"User-Agent": f"{self.username}/mwbot"}
+        self.headers = {"User-Agent": f"{self.username.encode('utf-8')}/mwbot"}
 
     async def __aexit__(self):
         """异步析构函数"""
