@@ -1,6 +1,7 @@
 import httpx
 from loguru import logger
 import os
+import urllib
 from mwbot import error
 from typing import Union
 from .prototype import WikiSectionList
@@ -108,7 +109,7 @@ class Bot:
         :params: section(`Union[str,int]`)：*可选项* 编辑章节号
         :return: str/None"""
         act = await self.client.post(
-            url=f"{self.index}?action=raw&title={title}&section={str(section)}",
+            url=f"{self.index}?action=raw&title={urllib.parse.quote(title)}&section={str(section)}",
             headers=self.headers,
         )
         if act.status_code == 404:
@@ -242,7 +243,7 @@ class Bot:
         act: dict = act.json()
         if act.get("edit", {}).get("result", None) is not None:
             if act["edit"]["result"] == "Success":
-                logger.success(f'成功移动页面[[{frompage}]]至[[{topage}]]！')
+                logger.success(f"成功移动页面[[{frompage}]]至[[{topage}]]！")
             else:
                 logger.debug(act)
                 return False
