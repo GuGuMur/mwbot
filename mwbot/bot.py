@@ -256,7 +256,6 @@ class Bot:
         :use: await bot.delete_page(title, reason)
         :params: title(`str`) : 删除页面的标题
         :params: reason(`str`) : 删除理由
-        :params: summary(`str`) : 编辑摘要
         :params: ...
         :return: None"""
 
