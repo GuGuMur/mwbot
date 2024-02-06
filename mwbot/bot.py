@@ -242,8 +242,37 @@ class Bot:
         logger.info(f"已向{self.sitename}发送移动页面[[{frompage}]]至[[{topage}]]的请求。")
         act: dict = act.json()
         if act.get("edit", {}).get("result", None) is not None:
-            if act["edit"]["result"] == "Success":
+            if act["move"]["from"] and act["move"]["to"]:
                 logger.success(f"成功移动页面[[{frompage}]]至[[{topage}]]！")
+            else:
+                logger.debug(act)
+                return False
+        else:
+            logger.debug(act)
+            return False
+
+    async def delete_page(self, title: str, **kwargs):
+        """移动一个页面
+        :use: await bot.delete_page(title, reason)
+        :params: title(`str`) : 删除页面的标题
+        :params: reason(`str`) : 删除理由
+        :params: summary(`str`) : 编辑摘要
+        :params: ...
+        :return: None"""
+
+        data = {
+            "action": "delete",
+            "token": await self.fetch_token(type="csrf"),
+            "title": title,
+            "format": "json",
+        }
+        data.update(kwargs)
+        act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        logger.info(f"已向{self.sitename}发送删除页面[[{title}]]的请求。")
+        act: dict = act.json()
+        if act.get("edit", {}).get("result", None) is not None:
+            if act["delete"]["title"]:
+                logger.success(f"成功删除页面[[{title}]]！")
             else:
                 logger.debug(act)
                 return False
