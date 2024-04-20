@@ -39,15 +39,17 @@ class Bot:
         data = {"action": action, "format": "json"}
         data.update(kwargs)
 
-        text = await self.client.get(url=self.api, data=data, headers=self.headers)
-        return text.json()
+        act = await self.client.get(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
+        return act.json()
 
     async def call_post_api(self, action: str, **kwargs) -> dict:
         data = {"action": action, "format": "json"}
         data.update(kwargs)
 
-        text = await self.client.post(url=self.api, data=data, headers=self.headers)
-        return text.json()
+        act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
+        return act.json()
 
     async def fetch_token(self, type: str) -> str:
         """根据不同的type类型返回对应的token
@@ -72,6 +74,7 @@ class Bot:
             "format": "json",
         }
         login = await self.client.post(url=self.api, data=data, headers=self.headers)
+        login.raise_for_status()
         login = login.json()
         if login["login"]["result"] == "Success":
             logger.success(f'您已登录至{self.sitename}, {login["login"]["lgusername"]}！')
@@ -96,6 +99,7 @@ class Bot:
             "format": "json",
         }
         text = await self.client.post(url=self.api, data=data, headers=self.headers)
+        text.raise_for_status()
         text = text.json()
         text = text["query"]["pages"][0]
         return text
@@ -112,11 +116,8 @@ class Bot:
             url=f"{self.index}?action=raw&title={urllib.parse.quote(title)}&section={str(section)}",
             headers=self.headers,
         )
-        if act.status_code == 404:
-            logger.warning(f"请检查get_page_text传入的页面[[{title}]]是否在{self.sitename}存在。")
-            return None
-        else:
-            return str(act.text)
+        act.raise_for_status()
+        return str(act.text)
 
     async def edit_page(self, title: str, **kwargs):
         """编辑一个页面
@@ -138,6 +139,7 @@ class Bot:
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送页面[[{title}]]的编辑请求。")
+        act.raise_for_status()
         act: dict = act.json()
         if act.get("edit", {}).get("result", None) is not None:
             if act["edit"]["result"] == "Success":
@@ -193,6 +195,7 @@ class Bot:
         act = await self.client.post(
             url=self.api, data=data, headers=self.headers, files=FILE
         )
+        act.raise_for_status()
         act = act.json()
         if act.get("upload", {}).get("result", None) is not None:
             if act["upload"]["result"] == "Success":
@@ -215,6 +218,7 @@ class Bot:
         data = {"action": "purge", "titles": title, "format": "json"}
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         logger.success(f"成功刷新页面 [[{title}]]。")
 
@@ -240,6 +244,7 @@ class Bot:
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送移动页面[[{frompage}]]至[[{topage}]]的请求。")
+        act.raise_for_status()
         act: dict = act.json()
         if act.get("edit", {}).get("result", None) is not None:
             if act["move"]["from"] and act["move"]["to"]:
@@ -268,6 +273,7 @@ class Bot:
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
         logger.info(f"已向{self.sitename}发送删除页面[[{title}]]的请求。")
+        act.raise_for_status()
         act: dict = act.json()
         if act.get("edit", {}).get("result", None) is not None:
             if act["delete"]["title"]:
@@ -285,6 +291,7 @@ class Bot:
         data = {"format": "json", "page": title, "action": "parse"}
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         return act.json()
 
     async def get_sections(self, title: str) -> Union[WikiSectionList, bool]:
@@ -296,8 +303,8 @@ class Bot:
         if result_list:
             return WikiSectionList(result_list)
         else:
-            return False
             logger.warning(f"页面 [[{title}]] 中没有子章节！")
+            return False
 
     async def deal_flow(self, title, cotmoderationState, cotreason="标记"):
         data = {
@@ -310,6 +317,7 @@ class Bot:
             "token": await self.fetch_token(type="csrf"),
         }
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         logger.success(
             f"{cotmoderationState} the flow {title} successfully.({cotreason})"
@@ -328,6 +336,7 @@ class Bot:
         }
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         logger.success(f"Reply the flow {title} successfully.")
 
@@ -349,7 +358,9 @@ class Bot:
         }
         act = await self.client.post(
             url=self.index, data=data, headers=self.headers
-        ).json()
+        )
+        act.raise_for_status()
+        act = act.json()
         return XMLParse(act.content)["feed"]["entry"]
 
     async def search(
@@ -368,6 +379,7 @@ class Bot:
         }
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         rl = []
         if act["query"]["search"] is not False:
@@ -389,6 +401,7 @@ class Bot:
             "format": "json",
         }
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         return act["query"]
 
@@ -405,8 +418,9 @@ class Bot:
         }
         data.update(kwargs)
         data["token"] = await self.fetch_token(type="csrf")
-        data["reason"] += " //Protect by Bot."
+        # data["reason"] += " //Protect by Bot."
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         return act["protect"]
 
@@ -426,6 +440,7 @@ class Bot:
             data["uccontinue"] = uccontinue
         data.update(kwargs)
         act = await self.client.post(url=self.api, data=data, headers=self.headers)
+        act.raise_for_status()
         act = act.json()
         rl = []
         if act["query"]["usercontribs"] is not False:
