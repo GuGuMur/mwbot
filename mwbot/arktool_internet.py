@@ -8,7 +8,7 @@ class arktool:
         self,
         domains: list = [
             "https://raw.githubusercontent.com/",
-            "https://raw.kgithub.com/",
+            "https://raw.kkgithub.com/",
             "https://ghproxy.com/https://raw.githubusercontent.com/",
             "https://fastly.jsdelivr.net/gh/",
             "https://cdn.staticaly.com/gh/",
@@ -103,12 +103,19 @@ class arktool:
         elif stage_id.startswith("act42d0_"):
             file = await self.read_ark_file("excel/activity_table.json")
             stage_location = file["activity"]["TYPE_ACT42D0"]["act42d0"]["stageInfoData"][stage_id]["levelId"]
+        elif stage_id.startswith("sandbox_0"):
+            file = await self.read_ark_file("excel/sandbox_table.json")
+            stage_location = file["sandboxActTables"]["act1sandbox"]["stageDatas"][stage_id]["levelId"]
+        elif stage_id.startswith("sandbox_1"):
+            file = await self.read_ark_file("excel/sandbox_perm_table.json")
+            stage_location = file["detail"]["SANDBOX_V2"]["sandbox_1"]["stageData"][stage_id]["levelId"]
         else:
             file = await self.read_ark_file("excel/stage_table.json")
             stage_location = file["stages"][stage_id]["levelId"]
         # 返回文件
         if stage_location:
-            return await self.read_ark_file(f"levels/{stage_location.lower()}.json")
+            stage_location = stage_location.replace("\\", "/").lower()
+            return await self.read_ark_file(f"levels/{stage_location}.json")
         else:
             return ""
 
