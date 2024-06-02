@@ -80,7 +80,8 @@ def get_stage_info(content: str):
         stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
     # 返回文件
     if stage_location:
-        return read_ark_file(f"levels/{stage_location.lower()}.json")
+        stage_location = stage_location.replace("\\", "/")
+        return read_ark_file(f"levels/{stage_location}.json")
     else:
         return ""
 
