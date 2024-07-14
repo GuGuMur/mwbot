@@ -55,8 +55,8 @@ class Bot:
         """根据不同的type类型返回对应的token
         :param: type(`str`)  token的类型"""
 
-        data = {"action": "query", "meta": "tokens", "type": type, "format": "json"}
-        token = await self.client.post(url=self.api, data=data)
+        params = {"action": "query", "meta": "tokens", "type": type, "format": "json"}
+        token = await self.client.get(url=self.api, params=params)
         token.raise_for_status()
         token = token.json()
         location = type + "token"
