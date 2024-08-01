@@ -80,6 +80,8 @@ def get_stage_info(content: str):
         stage_location = read_ark_file("excel/sandbox_table.json")["sandboxActTables"]["act1sandbox"]["stageDatas"][stage_id]["levelId"]
     elif stage_id.startswith("sandbox_1"):
         stage_location = read_ark_file("excel/sandbox_perm_table.json")["detail"]["SANDBOX_V2"]["sandbox_1"]["stageData"][stage_id]["levelId"]
+    elif stage_id.startswith("ch_"):
+        stage_location = read_ark_file("excel/story_review_meta_table.json")["trainingCampData"]["stageData"][stage_id]["levelId"]
     else:
         stage_location = read_ark_file("excel/stage_table.json")["stages"][stage_id]["levelId"]
     # 返回文件
