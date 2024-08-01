@@ -110,7 +110,7 @@ class arktool:
             file = await self.read_ark_file("excel/sandbox_perm_table.json")
             stage_location = file["detail"]["SANDBOX_V2"]["sandbox_1"]["stageData"][stage_id]["levelId"]
         elif stage_id.startswith("ch_"):
-            file = await self.read_ark_file("excel/sandbox_perm_table.json")
+            file = await self.read_ark_file("excel/story_review_meta_table.json")
             stage_location = file["trainingCampData"]["stageData"][stage_id]["levelId"]
         else:
             file = await self.read_ark_file("excel/stage_table.json")
