@@ -39,7 +39,7 @@ class Bot:
         data = {"action": action, "format": "json"}
         data.update(kwargs)
 
-        act = await self.client.get(url=self.api, data=data, headers=self.headers)
+        act = await self.client.get(url=self.api, params=data, headers=self.headers)
         act.raise_for_status()
         return act.json()
 

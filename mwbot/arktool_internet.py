@@ -1,6 +1,7 @@
 import httpx
 from typing import Union
-import re, mwparserfromhell
+import re
+import mwparserfromhell
 
 
 class arktool:
@@ -21,7 +22,7 @@ class arktool:
         self.domains = domains
         timeout = httpx.Timeout(10.0, connect=60.0, read=60.0, write=60.0, pool=60.0)
         self.client = httpx.AsyncClient(verify=False, timeout=timeout)
-        self.headers = {"User-Agent": f"mwbot/arktool"}
+        self.headers = {"User-Agent": "mwbot/arktool"}
 
     async def __aexit__(self):
         """异步析构函数"""
@@ -35,7 +36,7 @@ class arktool:
                     headers=self.headers,
                 )
                 return res.text
-            except:
+            except Exception:
                 pass
         return None
 
@@ -47,7 +48,7 @@ class arktool:
                     headers=self.headers,
                 )
                 return res.json()
-            except:
+            except Exception:
                 pass
         return None
 
