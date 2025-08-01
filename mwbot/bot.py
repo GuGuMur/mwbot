@@ -105,19 +105,27 @@ class Bot:
         return text
 
     async def get_page_text(
-        self, title: str, section: Union[str, int] = ""
+        self, title: str, section: Union[str, int] = "", **kwargs
     ) -> Union[str, None]:
         """获取页面中的文本
         :use: text = bot.get_page_text(title)
         :params: title(`str`)：页面标题
         :params: section(`Union[str,int]`)：*可选项* 编辑章节号
         :return: str/None"""
+        params = {
+            "action": "raw",
+            "title": title,
+            "section": str(section),
+        }
+        params.update(kwargs)
         act = await self.client.post(
-            url=f"{self.index}?action=raw&title={urllib.parse.quote(title)}&section={str(section)}",
+            url=self.index,
+            params=params,
             headers=self.headers,
         )
         act.raise_for_status()
         return str(act.text)
+    
 
     async def edit_page(self, title: str, **kwargs):
         """编辑一个页面
