@@ -113,6 +113,10 @@ class arktool:
         elif stage_id.startswith("ch_"):
             file = await self.read_ark_file("excel/story_review_meta_table.json")
             stage_location = file["trainingCampData"]["stageData"][stage_id]["levelId"]
+        elif stage_id.startswith("level_rune"):
+            stage_location = "obt/rune/" + stage_id
+        elif stage_id.startswith("level_crisis_v2"):
+            stage_location = "obt/crisis/v2/" + stage_id
         else:
             file = await self.read_ark_file("excel/stage_table.json")
             stage_location = file["stages"][stage_id]["levelId"]

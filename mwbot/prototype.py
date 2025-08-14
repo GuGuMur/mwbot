@@ -1,6 +1,5 @@
 """定义一些功能特化的基类"""
 from abc import ABC
-import mwparserfromhell
 
 # import pydantic
 # import pendulum

@@ -1,7 +1,6 @@
 import httpx
 from loguru import logger
 import os
-import urllib
 from mwbot import error
 from typing import Union
 from .prototype import WikiSectionList
