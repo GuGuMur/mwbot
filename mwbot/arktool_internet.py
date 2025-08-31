@@ -115,8 +115,12 @@ class arktool:
             stage_location = file["trainingCampData"]["stageData"][stage_id]["levelId"]
         elif stage_id.startswith("level_rune"):
             stage_location = "obt/rune/" + stage_id
-        elif stage_id.startswith("level_crisis_v2"):
-            stage_location = "obt/crisis/v2/" + stage_id
+        elif stage_id.startswith("crisis_v2"):
+            stage_location = "obt/crisis/v2/" + "level_" + stage_id
+        elif match := re.match(r"^level_recalrune_(\d+)[-_]", stage_id):
+            number = int(match.group(1).lstrip("0"))
+            file = await self.read_ark_file("excel/crisis_v2_table.json")
+            stage_location = file["recalRuneData"]["seasons"][f"recalRune_season_{number}"]["stages"][stage_id]["levelId"]
         else:
             file = await self.read_ark_file("excel/stage_table.json")
             stage_location = file["stages"][stage_id]["levelId"]
